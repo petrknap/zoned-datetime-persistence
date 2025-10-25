@@ -31,11 +31,11 @@ final class ZonedDateTimePersistenceTest extends TestCase
         $utcCompanion = ZonedDateTimePersistence::computeUtcCompanion($zonedDateTime);
         $localDateTime = JavaSe8\Time::toLocalDateTime($zonedDateTime);
         return [
-            'local date-time + UTC companion' => [ZonedDateTimePersistence::computeZonedDateTime(
+            'DateTime + UTC companion' => [ZonedDateTimePersistence::computeZonedDateTime(
                 $localDateTime,
                 utcCompanion: $utcCompanion,
             )],
-            'local date-time + UTC companion + format' => [ZonedDateTimePersistence::computeZonedDateTime(
+            'string + UTC companion + format' => [ZonedDateTimePersistence::computeZonedDateTime(
                 $localDateTime->format(self::FORMAT),
                 utcCompanion: $utcCompanion->format(self::FORMAT),
                 format: self::FORMAT,

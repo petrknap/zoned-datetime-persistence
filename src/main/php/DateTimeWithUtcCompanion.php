@@ -6,13 +6,13 @@ namespace PetrKnap\ZonedDateTimePersistence;
 
 use DateTimeImmutable;
 use DateTimeInterface;
-use LogicException;
+use InvalidArgumentException;
 
 /**
  * @phpstan-import-type LocalDateTime from JavaSe8\Time
  * @phpstan-import-type ZonedDateTime from JavaSe8\Time
  *
- * @phpstan-type ConstructorArgs array{0: ZonedDateTime, 1: ZonedDateTime}
+ * @phpstan-type Constructed array{0: ZonedDateTime, 1: ZonedDateTime}
  */
 final class DateTimeWithUtcCompanion
 {
@@ -30,51 +30,56 @@ final class DateTimeWithUtcCompanion
         DateTimeInterface|null $utcCompanion = null,
     ) {
         if ($utcCompanion === null) {
-            [$dateTime, $utcCompanion] = self::createArgsFromZonedDateTime($dateTime);
+            [$this->dateTime, $this->utcCompanion] = self::constructFromZonedDateTime($dateTime);
         } elseif ($dateTime->getOffset() === $utcCompanion->getOffset()) {
-            [$dateTime, $utcCompanion] = self::createArgsFromLocalDateTimes($dateTime, $utcCompanion);
+            [$this->dateTime, $this->utcCompanion] = self::constructFromLocalDateTimes($dateTime, $utcCompanion);
         } else {
-            [$dateTime, $utcCompanion] = self::createArgsFromZonedDateTimes($dateTime, $utcCompanion);
-        }
-
-        $this->dateTime = $dateTime;
-        $this->utcCompanion = $utcCompanion;
-
-        if ($this->utcCompanion->getOffset() !== 0) {
-            throw new LogicException('$utcCompanion must have zero offset');
-        } elseif (DateTimeUtils::difference($this->dateTime, $this->utcCompanion) !== 0) {
-            throw new LogicException('$dateTime and $utcCompanion must have zero difference');
+            [$this->dateTime, $this->utcCompanion] = self::constructFromZonedDateTimes($dateTime, $utcCompanion);
         }
     }
 
     /**
-     * @return ConstructorArgs
+     * @return Constructed
      */
-    private function createArgsFromLocalDateTimes(DateTimeInterface $dateTime, DateTimeInterface $utcCompanion): array
+    private function constructFromLocalDateTimes(DateTimeInterface $dateTime, DateTimeInterface $utcCompanion): array
     {
-        return self::createArgsFromZonedDateTime(
+        return self::constructFromZonedDateTime(
             ZonedDateTimePersistence::computeZonedDateTime($dateTime, $utcCompanion),
         );
     }
 
     /**
-     * @return ConstructorArgs
+     * @return Constructed
      */
-    private function createArgsFromZonedDateTime(DateTimeInterface $dateTime): array
+    private function constructFromZonedDateTime(DateTimeInterface $dateTime): array
     {
         $zonedDateTime = JavaSe8\Time::zonedDateTime($dateTime);
 
-        return [
+        return self::constructFromZonedDateTimes(
             $zonedDateTime,
             ZonedDateTimePersistence::computeUtcCompanion($zonedDateTime),
-        ];
+        );
     }
 
     /**
-     * @return ConstructorArgs
+     * @return Constructed
      */
-    private function createArgsFromZonedDateTimes(DateTimeInterface $dateTime, DateTimeInterface $utcCompanion): array
+    private function constructFromZonedDateTimes(DateTimeInterface $dateTime, DateTimeInterface $utcCompanion): array
     {
+        $utcCompanionOffset = $utcCompanion->getOffset();
+        $dateTimeToUtcCompanionDifference = DateTimeUtils::difference($dateTime, $utcCompanion);
+        if ($utcCompanionOffset !== 0) {
+            throw new InvalidArgumentException(sprintf(
+                '$utcCompanion must have zero offset, got %d seconds',
+                $utcCompanionOffset,
+            ));
+        } elseif ($dateTimeToUtcCompanionDifference !== 0) {
+            throw new InvalidArgumentException(sprintf(
+                '$dateTime and $utcCompanion must have zero difference, got %d seconds',
+                $dateTimeToUtcCompanionDifference,
+            ));
+        }
+
         return [
             JavaSe8\Time::zonedDateTime($dateTime),
             JavaSe8\Time::zonedDateTime($utcCompanion),

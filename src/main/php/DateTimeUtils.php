@@ -7,7 +7,7 @@ namespace PetrKnap\ZonedDateTimePersistence;
 use DateTimeImmutable;
 use DateTimeInterface;
 use DateTimeZone;
-use RuntimeException;
+use InvalidArgumentException;
 
 /**
  * @internal helper
@@ -32,22 +32,26 @@ final class DateTimeUtils
     }
 
     /**
-     * @param ($format is null ? DateTimeInterface : string) $zonedDateTime
+     * @param ($format is null ? DateTimeInterface : string) $dateTime
      *
      * @return ZonedDateTime
      */
     public static function parse(
-        DateTimeInterface|string $zonedDateTime,
+        DateTimeInterface|string $dateTime,
         string|null $format = null,
     ): DateTimeImmutable {
-        $zonedDateTime = $format === null
-            ? $zonedDateTime
-            : DateTimeImmutable::createFromFormat($format, $zonedDateTime)
-        ;
-        if ($zonedDateTime === false) {
-            throw new RuntimeException('Could not parse $zonedDateTime as $format');
+        if (is_string($dateTime)) {
+            if ($format === null) {
+                throw new InvalidArgumentException('Missing $format');
+            }
+            $dateTime = DateTimeImmutable::createFromFormat($format, $dateTime)
+                ?: throw new Exception\DateTimeUtilsCouldNotParse(
+                    dateTime: $dateTime,
+                    format: $format,
+                )
+            ;
         }
-        return JavaSe8\Time::zonedDateTime($zonedDateTime);
+        return JavaSe8\Time::zonedDateTime($dateTime);
     }
 
     /**
