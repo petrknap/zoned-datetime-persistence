@@ -15,7 +15,7 @@ final class ReadmeTest extends TestCase implements MarkdownFileTestInterface
 
     public static function getPathToMarkdownFile(): string
     {
-        return __DIR__ . '/../../README.md';
+        return __DIR__ . '/../../../README.md';
     }
 
     public static function getExpectedOutputsOfPhpExamples(): iterable
