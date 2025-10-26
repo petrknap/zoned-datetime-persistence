@@ -1,4 +1,4 @@
-tests export-ignore
+src/test export-ignore
 Dockerfile export-ignore
 bin export-ignore
 .github export-ignore
