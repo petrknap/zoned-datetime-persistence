@@ -21,7 +21,14 @@
     }
   ],
   "homepage": "https://github.com/petrknap/zoned-datetime-persistence",
-  "keywords": [],
+  "keywords": [
+    "DateTime",
+    "SQL",
+    "Timezone",
+    "ZonedDateTime",
+    "helper",
+    "persistence"
+  ],
   "license": "LGPL-3.0-or-later",
   "name": "petrknap/zoned-datetime-persistence",
   "require": {
