@@ -1,12 +1,12 @@
 {
   "autoload": {
     "psr-4": {
-      "PetrKnap\\ZonedDateTimePersistence\\": "lib/src/main/php"
+      "PetrKnap\\ZonedDateTimePersistence\\": "src/main/php"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "PetrKnap\\ZonedDateTimePersistence\\": "lib/src/test/php"
+      "PetrKnap\\ZonedDateTimePersistence\\": "src/test/php"
     }
   },
   "config": {
@@ -42,12 +42,12 @@
     "squizlabs/php_codesniffer": "^3.7"
   },
   "scripts": {
-    "test": "phpunit --colors=always --testdox lib/src/test",
+    "test": "phpunit --colors=always --testdox src/test",
     "check-implementation": [
-      "phpcs --colors --standard=PSR12 --exclude=Generic.Files.LineLength lib/src/main/php lib/src/test",
-      "phpstan analyse --level max lib/src/main/php --ansi --no-interaction",
-      "phpstan analyse --level 5 lib/src/test --ansi --no-interaction",
-      "phpinsights analyse lib/src/main/php lib/src/test --ansi --no-interaction --format=github-action | sed -e \"s#::error file=$PWD/#::notice file=#g\""
+      "phpcs --colors --standard=PSR12 --exclude=Generic.Files.LineLength src/main/php src/test",
+      "phpstan analyse --level max src/main/php --ansi --no-interaction",
+      "phpstan analyse --level 5 src/test --ansi --no-interaction",
+      "phpinsights analyse src/main/php src/test --ansi --no-interaction --format=github-action | sed -e \"s#::error file=$PWD/#::notice file=#g\""
     ],
     "check-requirements": [
       "composer update \"petrknap/*\"",
