@@ -15,13 +15,14 @@ use DateTimeZone;
 final class ZonedDateTimePersistence
 {
     /**
-     * @return ZonedDateTime
+     * @return LocalDateTime
      */
     public static function computeUtcCompanion(
         DateTimeInterface $zonedDateTime,
     ): DateTimeImmutable {
-        return JavaSe8\Time::zonedDateTime($zonedDateTime)
-            ->setTimezone(new DateTimeZone('UTC'));
+        return JavaSe8\Time::toLocalDateTime(
+            JavaSe8\Time::zonedDateTime($zonedDateTime)->setTimezone(new DateTimeZone('UTC')),
+        );
     }
 
     /**

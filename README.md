@@ -16,7 +16,7 @@ This makes it possible to **work with date and time directly in SQL**.
 The original date is perfect for grouping and filtering, while UTC time is needed for correct sorting.
 
 ```php
-use PetrKnap\ZonedDateTimePersistence\DateTimeWithUtcCompanion;
+use PetrKnap\ZonedDateTimePersistence\LocalDateTimeWithUtcCompanion;
 use PetrKnap\ZonedDateTimePersistence\ZonedDateTimePersistence;
 
 $db = new PDO('sqlite::memory:');
@@ -32,9 +32,9 @@ $insert->execute([
     'We still have summer time',
 ]);
 # record usage
-$now = new DateTimeWithUtcCompanion(new DateTime('2025-10-26 02:15', new DateTimeZone('CET')));
+$now = new LocalDateTimeWithUtcCompanion(new DateTime('2025-10-26 02:15', new DateTimeZone('CET')));
 $insert->execute([
-    $now->dateTime->format($dbDateTimeFormat),
+    $now->localDateTime->format($dbDateTimeFormat),
     $now->utcCompanion->format($dbDateTimeFormat),
     'Now we have winter time',
 ]);

@@ -22,4 +22,8 @@ class LocalDateTimeWithUtcCompanionTest extends TestCase {
                 )
         );
     }
+
+    @Test void toZonedDateTime() {
+        assertEquals(zonedDateTime, new LocalDateTimeWithUtcCompanion(localDateTime, utcDateTime.toLocalDateTime()).toZonedDateTime());
+    }
 }
