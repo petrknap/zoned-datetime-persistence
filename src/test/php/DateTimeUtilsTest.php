@@ -11,8 +11,8 @@ final class DateTimeUtilsTest extends TestCase
     public function testAsUtcInstantAtOffset(): void
     {
         self::assertEquals(
-            $this->utcDateTime->add(new DateInterval('PT' . self::OFFSET . 'S'))->getTimestamp(),
-            DateTimeUtils::asUtcInstantAtOffset($this->localDateTime, self::OFFSET)->getTimestamp(),
+            $this->utcDateTime->add(new DateInterval('PT' . self::ZONED_DATETIME_OFFSET . 'S'))->getTimestamp(),
+            DateTimeUtils::asUtcInstantAtOffset($this->localDateTime, self::ZONED_DATETIME_OFFSET)->getTimestamp(),
         );
     }
 
@@ -20,7 +20,7 @@ final class DateTimeUtilsTest extends TestCase
     {
         self::assertDateTimeEquals(
             $this->localDateTime,
-            DateTimeUtils::parseAsLocalDateTime(self::DATETIME, self::FORMAT),
+            DateTimeUtils::parseAsLocalDateTime(self::LOCAL_DATETIME, self::LOCAL_DATETIME_PATTERN),
         );
     }
 
@@ -28,13 +28,13 @@ final class DateTimeUtilsTest extends TestCase
     {
         self::expectException(Exception\DateTimeUtilsCouldNotParseAsLocalDateTime::class);
 
-        DateTimeUtils::parseAsLocalDateTime('this is not a date', self::FORMAT);
+        DateTimeUtils::parseAsLocalDateTime('this is not a date', self::LOCAL_DATETIME_PATTERN);
     }
 
     public function testSecondsBetween(): void
     {
         self::assertEquals(
-            self::OFFSET,
+            self::ZONED_DATETIME_OFFSET,
             DateTimeUtils::secondsBetween(JavaSe8\Time::toLocalDateTime($this->utcDateTime), $this->localDateTime),
         );
     }
