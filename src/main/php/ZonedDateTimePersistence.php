@@ -14,12 +14,15 @@ use DateTimeZone;
  */
 final class ZonedDateTimePersistence
 {
+    private function __construct()
+    {
+    }
+
     /**
      * @return LocalDateTime
      */
-    public static function computeUtcCompanion(
-        DateTimeInterface $zonedDateTime,
-    ): DateTimeImmutable {
+    public static function computeUtcCompanion(DateTimeInterface $zonedDateTime): DateTimeImmutable
+    {
         return JavaSe8\Time::toLocalDateTime(
             JavaSe8\Time::zonedDateTime($zonedDateTime)->setTimezone(new DateTimeZone('UTC')),
         );
@@ -30,6 +33,8 @@ final class ZonedDateTimePersistence
      * @param ($format is null ? DateTimeInterface : string) $utcCompanion
      *
      * @return ZonedDateTime
+     *
+     * @throws Exception\ZonedDateTimePersistenceCouldNotComputeZonedDateTime
      */
     public static function computeZonedDateTime(
         DateTimeInterface|string $localDateTime,
@@ -40,10 +45,16 @@ final class ZonedDateTimePersistence
             $localDateTime = JavaSe8\Time::localDateTime($localDateTime);
             $utcCompanion = JavaSe8\Time::localDateTime($utcCompanion);
         } else {
-            $localDateTime = DateTimeUtils::parseAsLocalDateTime($localDateTime, $format);
-            $utcCompanion = DateTimeUtils::parseAsLocalDateTime($utcCompanion, $format);
+            try {
+                $localDateTime = DateTimeUtils::parseAsLocalDateTime($localDateTime, $format);
+                $utcCompanion = DateTimeUtils::parseAsLocalDateTime($utcCompanion, $format);
+            } catch (Exception\DateTimeUtilsCouldNotParseAsLocalDateTime $cause) {
+                throw new Exception\ZonedDateTimePersistenceCouldNotComputeZonedDateTime($cause);
+            }
         }
-        $offset = DateTimeUtils::secondsBetween($utcCompanion, $localDateTime);
-        return DateTimeUtils::asUtcInstantAtOffset($utcCompanion, $offset);
+        return DateTimeUtils::asUtcInstantAtOffset(
+            $utcCompanion,
+            DateTimeUtils::secondsBetween($utcCompanion, $localDateTime),
+        );
     }
 }

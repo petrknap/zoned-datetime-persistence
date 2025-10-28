@@ -10,36 +10,34 @@ use PHPUnit\Framework\Attributes\Depends;
 
 final class ZonedDateTimePersistenceTest extends TestCase
 {
-    public function testComputesUtcCompanion(): void
+    public function testComputeUtcCompanion(): void
     {
-        $utcCompanion = ZonedDateTimePersistence::computeUtcCompanion($this->zonedDateTime);
-
-        self::assertEquals(0, $utcCompanion->getOffset());
-        self::assertEquals($this->zonedDateTime->getTimestamp(), $utcCompanion->getTimestamp());
+        self::assertDateTimeEquals(
+            JavaSe8\Time::localDateTime($this->utcDateTime),
+            ZonedDateTimePersistence::computeUtcCompanion($this->zonedDateTime),
+        );
     }
 
-    #[DataProvider('dataComputesZonedDateTime')]
-    public function testComputesZonedDateTime(DateTimeImmutable $zonedDateTime): void
+    public function testComputeUtcCompanionFromStrings(): void
     {
-        self::assertEquals(self::OFFSET, $zonedDateTime->getOffset());
-        self::assertDateTimeEquals($this->zonedDateTime, $zonedDateTime);
+        self::assertDateTimeEquals(
+            $this->zonedDateTime,
+            ZonedDateTimePersistence::computeZonedDateTime(
+                $this->localDateTime,
+                JavaSe8\Time::localDateTime($this->utcDateTime),
+            ),
+        );
     }
 
-    public static function dataComputesZonedDateTime(): array
+    public function testComputeZonedDateTimeFromStrings(): void
     {
-        $zonedDateTime = JavaSe8\Time::zonedDateTime(new DateTimeImmutable(self::ZONED_DATETIME));
-        $utcCompanion = ZonedDateTimePersistence::computeUtcCompanion($zonedDateTime);
-        $localDateTime = JavaSe8\Time::toLocalDateTime($zonedDateTime);
-        return [
-            'DateTime + UTC companion' => [ZonedDateTimePersistence::computeZonedDateTime(
-                $localDateTime,
-                utcCompanion: $utcCompanion,
-            )],
-            'string + UTC companion + format' => [ZonedDateTimePersistence::computeZonedDateTime(
-                $localDateTime->format(self::FORMAT),
-                utcCompanion: $utcCompanion->format(self::FORMAT),
-                format: self::FORMAT,
-            )],
-        ];
+        self::assertDateTimeEquals(
+            $this->zonedDateTime,
+            ZonedDateTimePersistence::computeZonedDateTime(
+                self::DATETIME,
+                JavaSe8\Time::localDateTime($this->utcDateTime)->format(self::FORMAT),
+                self::FORMAT,
+            ),
+        );
     }
 }
