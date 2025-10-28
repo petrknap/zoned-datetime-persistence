@@ -3,7 +3,7 @@ package io.github.petrknap.persistence.zoneddatetime;
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 
-public class LocalDateTimeWithUtcCompanion {
+public final class LocalDateTimeWithUtcCompanion {
     public final LocalDateTime localDateTime;
     public final LocalDateTime utcCompanion;
 

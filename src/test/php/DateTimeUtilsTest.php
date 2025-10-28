@@ -5,55 +5,37 @@ declare(strict_types=1);
 namespace PetrKnap\ZonedDateTimePersistence;
 
 use DateInterval;
-use DateTime;
-use DateTimeImmutable;
-use DateTimeInterface;
-use PHPUnit\Framework\Attributes\DataProvider;
 
 final class DateTimeUtilsTest extends TestCase
 {
-    public function testAtOffsetWorks(): void
+    public function testAsUtcInstantAtOffset(): void
     {
-        $offset = new DateInterval('PT' . self::OFFSET . 'S');
-
-        $zonedDateTime = DateTimeUtils::atOffset($this->localDateTime, self::OFFSET);
-
-        self::assertSame([
-            'formated' => $this->localDateTime->add($offset)->format(self::FORMAT),
-            'timestamp' => $this->localDateTime->getTimestamp(),
-        ], [
-            'formated' => $zonedDateTime->format(self::FORMAT),
-            'timestamp' => $zonedDateTime->getTimestamp(),
-        ], 'Formated values must be shifted by an offset, but timestamps must be same.');
-    }
-
-    #[DataProvider('dataParseWorks')]
-    public function testParseWorks(
-        DateTimeInterface|string $dateTime,
-        string|null $format,
-        DateTimeImmutable $expected,
-    ): void {
         self::assertEquals(
-            $expected,
-            DateTimeUtils::parse($dateTime, $format),
+            $this->utcDateTime->add(new DateInterval('PT' . self::OFFSET . 'S'))->getTimestamp(),
+            DateTimeUtils::asUtcInstantAtOffset($this->localDateTime, self::OFFSET)->getTimestamp(),
         );
     }
 
-    public static function dataParseWorks(): array
+    public function testParseAsLocalDateTime(): void
     {
-        $dateTime = new DateTime(self::DATETIME);
-        $dateTimeImmutable = DateTimeImmutable::createFromInterface($dateTime);
-
-        return [
-            'DateTime' => [$dateTime, null, $dateTimeImmutable],
-            'string + format' => [self::DATETIME, self::FORMAT, $dateTimeImmutable],
-        ];
+        self::assertDateTimeEquals(
+            $this->localDateTime,
+            DateTimeUtils::parseAsLocalDateTime(self::DATETIME, self::FORMAT),
+        );
     }
 
-    public function testParseThrowsOnWrongFormat(): void
+    public function testParseAsLocalDateTimeThrowsOnIncorrectText(): void
     {
-        self::expectException(Exception\DateTimeUtilsCouldNotParse::class);
+        self::expectException(Exception\DateTimeUtilsCouldNotParseAsLocalDateTime::class);
 
-        DateTimeUtils::parse('this is not a date', self::FORMAT);
+        DateTimeUtils::parseAsLocalDateTime('this is not a date', self::FORMAT);
+    }
+
+    public function testSecondsBetween(): void
+    {
+        self::assertEquals(
+            self::OFFSET,
+            DateTimeUtils::secondsBetween(JavaSe8\Time::toLocalDateTime($this->utcDateTime), $this->localDateTime),
+        );
     }
 }

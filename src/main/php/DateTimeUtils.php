@@ -6,8 +6,6 @@ namespace PetrKnap\ZonedDateTimePersistence;
 
 use DateTimeImmutable;
 use DateTimeInterface;
-use DateTimeZone;
-use InvalidArgumentException;
 
 /**
  * @internal helper
@@ -17,60 +15,44 @@ use InvalidArgumentException;
  */
 final class DateTimeUtils
 {
+    private function __construct()
+    {
+    }
+
     /**
      * @param LocalDateTime $localDateTime
      * @param int $offset seconds
      *
      * @return ZonedDateTime
      */
-    public static function atOffset(
+    public static function asUtcInstantAtOffset(
         DateTimeImmutable $localDateTime,
         int $offset,
     ): DateTimeImmutable {
-        /** @var ZonedDateTime */
-        return $localDateTime->setTimezone(self::offsetTimezone($offset));
+        return JavaSe8\Time::toInstant($localDateTime, 0)
+            ->setTimezone(JavaSe8\Time::zoneOffset($offset));
     }
 
     /**
-     * @param ($format is null ? DateTimeInterface : string) $dateTime
+     * @return LocalDateTime
      *
-     * @return ZonedDateTime
+     * @throws Exception\DateTimeUtilsCouldNotParseAsLocalDateTime
      */
-    public static function parse(
-        DateTimeInterface|string $dateTime,
-        string|null $format = null,
-    ): DateTimeImmutable {
-        if (is_string($dateTime)) {
-            if ($format === null) {
-                throw new InvalidArgumentException('Missing $format');
-            }
-            $dateTime = DateTimeImmutable::createFromFormat($format, $dateTime)
-                ?: throw new Exception\DateTimeUtilsCouldNotParse(
-                    dateTime: $dateTime,
-                    format: $format,
-                )
-            ;
-        }
-        return JavaSe8\Time::zonedDateTime($dateTime);
-    }
-
-    /**
-     * @return int seconds
-     */
-    public static function difference(
-        DateTimeInterface $a,
-        DateTimeInterface $b,
-    ): int {
-        return $a->getTimestamp() - $b->getTimestamp();
-    }
-
-    public static function offsetTimezone(int $offset): DateTimeZone
+    public static function parseAsLocalDateTime(string $text, string $pattern): DateTimeImmutable
     {
-        return new DateTimeZone(sprintf(
-            '%s%02d:%02d',
-            $offset >= 0 ? '+' : '-',
-            abs(intdiv($offset, 3600)),
-            abs(($offset % 3600) / 60),
-        ));
+        return JavaSe8\Time::localDateTime(
+            DateTimeImmutable::createFromFormat($pattern, $text)
+                ?: throw new Exception\DateTimeUtilsCouldNotParseAsLocalDateTime(
+                    text: $text,
+                    pattern: $pattern,
+                ),
+        );
+    }
+
+    public static function secondsBetween(
+        DateTimeInterface $startInclusive,
+        DateTimeInterface $endExclusive,
+    ): int {
+        return $endExclusive->getTimestamp() - $startInclusive->getTimestamp();
     }
 }
