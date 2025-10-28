@@ -36,13 +36,14 @@ final class ZonedDateTimePersistence
         DateTimeInterface|string $utcCompanion,
         string|null $format = null,
     ): DateTimeImmutable {
-        $localDateTime = JavaSe8\Time::toLocalDateTime(
-            DateTimeUtils::parse($localDateTime, $format),
-        );
-        $utcCompanion = JavaSe8\Time::toLocalDateTime(
-            DateTimeUtils::parse($utcCompanion, $format),
-        );
-        $offset = DateTimeUtils::difference($localDateTime, $utcCompanion);
-        return DateTimeUtils::atOffset($utcCompanion, $offset);
+        if ($format === null) {
+            $localDateTime = JavaSe8\Time::localDateTime($localDateTime);
+            $utcCompanion = JavaSe8\Time::localDateTime($utcCompanion);
+        } else {
+            $localDateTime = DateTimeUtils::parseAsLocalDateTime($localDateTime, $format);
+            $utcCompanion = DateTimeUtils::parseAsLocalDateTime($utcCompanion, $format);
+        }
+        $offset = DateTimeUtils::secondsBetween($utcCompanion, $localDateTime);
+        return DateTimeUtils::asUtcInstantAtOffset($utcCompanion, $offset);
     }
 }

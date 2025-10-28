@@ -6,7 +6,7 @@ namespace PetrKnap\ZonedDateTimePersistence\JavaSe8;
 
 use DateTimeImmutable;
 use DateTimeInterface;
-use PetrKnap\ZonedDateTimePersistence\DateTimeUtils;
+use DateTimeZone;
 
 /**
  * @phpstan-type LocalDateTime DateTimeImmutable&object{_local: null}
@@ -16,6 +16,21 @@ final class Time
 {
     public const TIMEZONE_LESS_FORMAT = 'Y-m-d H:i:s.u';
     private const LOCAL_OFFSET = 0;
+
+    /**
+     * @param LocalDateTime $localDateTime
+     *
+     * @return ZonedDateTime
+     */
+    public static function toInstant(DateTimeImmutable $localDateTime, int $offset): DateTimeImmutable
+    {
+        /** @var ZonedDateTime */
+        return DateTimeImmutable::createFromFormat(
+            self::TIMEZONE_LESS_FORMAT,
+            $localDateTime->format(self::TIMEZONE_LESS_FORMAT),
+            self::zoneOffset($offset),
+        );
+    }
 
     /**
      * @param ZonedDateTime $zonedDateTime
@@ -30,7 +45,7 @@ final class Time
             : DateTimeImmutable::createFromFormat(
                 self::TIMEZONE_LESS_FORMAT,
                 $zonedDateTime->format(self::TIMEZONE_LESS_FORMAT),
-                DateTimeUtils::offsetTimezone(self::LOCAL_OFFSET),
+                self::zoneOffset(self::LOCAL_OFFSET),
             )
         ;
     }
@@ -57,5 +72,15 @@ final class Time
             ? $dateTime // this is performance hack - input has correct type
             : DateTimeImmutable::createFromInterface($dateTime)
         ;
+    }
+
+    public static function zoneOffset(int $ofTotalSeconds): DateTimeZone
+    {
+        return new DateTimeZone(sprintf(
+            '%s%02d:%02d',
+            $ofTotalSeconds >= 0 ? '+' : '-',
+            abs(intdiv($ofTotalSeconds, 3600)),
+            abs(($ofTotalSeconds % 3600) / 60),
+        ));
     }
 }

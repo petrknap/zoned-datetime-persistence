@@ -8,7 +8,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.time.temporal.Temporal;
 
-class DateTimeUtils {
+final class DateTimeUtils {
     private DateTimeUtils() {
     }
 
@@ -35,12 +35,16 @@ class DateTimeUtils {
     }
 
     interface Exception {
-        class CouldNotParseAsLocalDateTime extends RuntimeException implements Exception {
+        final class CouldNotParseAsLocalDateTime extends RuntimeException implements Exception {
             public final String text;
             public final String pattern;
 
             public CouldNotParseAsLocalDateTime(CharSequence text, String pattern, Throwable cause) {
-                super(cause);
+                super(String.format(
+                        "Could not parse CharSequence(%d) as %s",
+                        text.length(),
+                        pattern
+                ), cause);
                 this.text = text.toString();
                 this.pattern = pattern;
             }

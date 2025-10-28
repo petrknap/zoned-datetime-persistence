@@ -2,35 +2,28 @@ package io.github.petrknap.persistence.zoneddatetime;
 
 import org.junit.jupiter.api.Test;
 
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
+import static org.junit.jupiter.api.Assertions.*;
 
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-class DateTimeUtilsTest extends TestCase {
+final class DateTimeUtilsTest extends TestCase {
     @Test void asUtcInstantAtOffset() {
-        ZonedDateTime zonedDateTime = DateTimeUtils.asUtcInstantAtOffset(localDateTime, OFFSET);
+        assertEquals(
+                utcDateTime.plusSeconds(OFFSET).toInstant(),
+                DateTimeUtils.asUtcInstantAtOffset(localDateTime, OFFSET).toInstant()
+        );
+    }
 
-        assertAll(
-                () -> assertEquals(
-                        localDateTime.plusSeconds(OFFSET),
-                        zonedDateTime.toLocalDateTime(),
-                        "Local date-times must be shifted by an offset"
-                ),
-                () -> assertEquals(
-                        localDateTime.toInstant(ZoneOffset.UTC),
-                        zonedDateTime.toInstant(),
-                        "Instants over UTC must be equal"
-                )
+    @Test void parseAsLocalDateTime() {
+        assertEquals(localDateTime, DateTimeUtils.parseAsLocalDateTime(LOCAL_DATETIME, LOCAL_PATTERN));
+    }
+
+    @Test void parseAsLocalDateTime_throws_on_incorrect_text() {
+        assertThrows(
+                DateTimeUtils.Exception.CouldNotParseAsLocalDateTime.class,
+                () -> DateTimeUtils.parseAsLocalDateTime("this is not a date", LOCAL_PATTERN)
         );
     }
 
     @Test void secondsBetween() {
         assertEquals(OFFSET, DateTimeUtils.secondsBetween(utcDateTime.toLocalDateTime(), localDateTime));
-    }
-
-    @Test void parseAsLocalDateTime() {
-        assertEquals(localDateTime, DateTimeUtils.parseAsLocalDateTime(LOCAL_DATETIME, LOCAL_PATTERN));
     }
 }
