@@ -14,8 +14,12 @@ use DateTimeZone;
  */
 final class Time
 {
-    public const TIMEZONE_LESS_FORMAT = 'Y-m-d H:i:s.u';
-    private const LOCAL_OFFSET = 0;
+    public const LOCAL_DATETIME_OFFSET = 0;
+    private const LOCAL_DATETIME_PATTERN = 'Y-m-d H:i:s.u';
+
+    private function __construct()
+    {
+    }
 
     /**
      * @param LocalDateTime $localDateTime
@@ -25,11 +29,7 @@ final class Time
     public static function toInstant(DateTimeImmutable $localDateTime, int $offset): DateTimeImmutable
     {
         /** @var ZonedDateTime */
-        return DateTimeImmutable::createFromFormat(
-            self::TIMEZONE_LESS_FORMAT,
-            $localDateTime->format(self::TIMEZONE_LESS_FORMAT),
-            self::zoneOffset($offset),
-        );
+        return self::overrideTimezone($localDateTime, $offset);
     }
 
     /**
@@ -40,14 +40,7 @@ final class Time
     public static function toLocalDateTime(DateTimeImmutable $zonedDateTime): DateTimeImmutable
     {
         /** @var LocalDateTime */
-        return $zonedDateTime->getOffset() === self::LOCAL_OFFSET
-            ? $zonedDateTime // this is performance hack - input has correct offset
-            : DateTimeImmutable::createFromFormat(
-                self::TIMEZONE_LESS_FORMAT,
-                $zonedDateTime->format(self::TIMEZONE_LESS_FORMAT),
-                self::zoneOffset(self::LOCAL_OFFSET),
-            )
-        ;
+        return self::overrideTimezone($zonedDateTime, self::LOCAL_DATETIME_OFFSET);
     }
 
     /**
@@ -74,6 +67,11 @@ final class Time
         ;
     }
 
+    /**
+     * `ZoneOffset` factory
+     *
+     * @return DateTimeZone
+     */
     public static function zoneOffset(int $ofTotalSeconds): DateTimeZone
     {
         return new DateTimeZone(sprintf(
@@ -82,5 +80,17 @@ final class Time
             abs(intdiv($ofTotalSeconds, 3600)),
             abs(($ofTotalSeconds % 3600) / 60),
         ));
+    }
+
+    private static function overrideTimezone(DateTimeImmutable $dateTime, int $offset): DateTimeImmutable
+    {
+        /** @var DateTimeImmutable */
+        return $dateTime->getOffset() === $offset
+            ? $dateTime // this is performance hack - input has correct offset
+            : DateTimeImmutable::createFromFormat(
+                self::LOCAL_DATETIME_PATTERN,
+                $dateTime->format(self::LOCAL_DATETIME_PATTERN),
+                self::zoneOffset($offset),
+            );
     }
 }
