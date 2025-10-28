@@ -36,7 +36,17 @@ final class Time
     }
 
     /**
-     * `ZonedDateTime` factory / entrypoint
+     * `LocalDateTime` factory
+     *
+     * @return LocalDateTime
+     */
+    public static function localDateTime(DateTimeInterface $dateTime): DateTimeImmutable
+    {
+        return self::toLocalDateTime(self::zonedDateTime($dateTime));
+    }
+
+    /**
+     * `ZonedDateTime` factory
      *
      * @return ZonedDateTime
      */

@@ -22,7 +22,7 @@ final class ZonedDateTimePersistenceTest extends TestCase
     public function testComputesZonedDateTime(DateTimeImmutable $zonedDateTime): void
     {
         self::assertEquals(self::OFFSET, $zonedDateTime->getOffset());
-        self::assertZonedDateTime($this->zonedDateTime, $zonedDateTime);
+        self::assertDateTimeEquals($this->zonedDateTime, $zonedDateTime);
     }
 
     public static function dataComputesZonedDateTime(): array
