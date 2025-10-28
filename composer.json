@@ -27,7 +27,10 @@
     "Timezone",
     "ZonedDateTime",
     "helper",
-    "persistence"
+    "persistence",
+    "summer-time",
+    "time-saving",
+    "winter-time"
   ],
   "license": "LGPL-3.0-or-later",
   "name": "petrknap/zoned-datetime-persistence",
