@@ -15,10 +15,10 @@ use PHPUnit\Framework\TestCase as Base;
 abstract class TestCase extends Base
 {
     protected const LOCAL_DATETIME = '2025-10-25 16:05';
-    protected const LOCAL_DATETIME_PATTERN = 'Y-m-d H:i';
+    protected const LOCAL_DATETIME_FORMAT = 'Y-m-d H:i';
     protected const ZONED_DATETIME = '2025-10-25 16:05 +02:00';
+    protected const ZONED_DATETIME_FORMAT = 'Y-m-d H:i P';
     protected const ZONED_DATETIME_OFFSET = 7200;
-    protected const ZONED_DATETIME_PATTERN = 'Y-m-d H:i P';
 
     /**
      * @var LocalDateTime
@@ -55,8 +55,8 @@ abstract class TestCase extends Base
         string $message = '',
     ): void {
         self::assertSame(
-            $expected->format(self::ZONED_DATETIME_PATTERN),
-            $actual->format(self::ZONED_DATETIME_PATTERN),
+            $expected->format(self::ZONED_DATETIME_FORMAT),
+            $actual->format(self::ZONED_DATETIME_FORMAT),
             $message,
         );
     }

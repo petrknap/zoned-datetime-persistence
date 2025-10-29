@@ -28,7 +28,7 @@ final class ZonedDateTimePersistenceTest extends TestCase {
                 ZonedDateTimePersistence.computeZonedDateTime(
                         LOCAL_DATETIME,
                         utcDateTime.toLocalDateTime().format(localDateTimeFormatter),
-                        LOCAL_DATETIME_PATTERN
+                        LOCAL_DATETIME_FORMAT
                 )
         );
     }

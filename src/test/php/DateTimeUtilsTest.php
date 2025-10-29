@@ -20,15 +20,15 @@ final class DateTimeUtilsTest extends TestCase
     {
         self::assertDateTimeEquals(
             $this->localDateTime,
-            DateTimeUtils::parseAsLocalDateTime(self::LOCAL_DATETIME, self::LOCAL_DATETIME_PATTERN),
+            DateTimeUtils::parseAsLocalDateTime(self::LOCAL_DATETIME, self::LOCAL_DATETIME_FORMAT),
         );
     }
 
-    public function testParseAsLocalDateTimeThrowsOnIncorrectText(): void
+    public function testParseAsLocalDateTimeThrowsOnIncorrectDatetime(): void
     {
         self::expectException(Exception\DateTimeUtilsCouldNotParseAsLocalDateTime::class);
 
-        DateTimeUtils::parseAsLocalDateTime('this is not a date', self::LOCAL_DATETIME_PATTERN);
+        DateTimeUtils::parseAsLocalDateTime('this is not a local date-time', self::LOCAL_DATETIME_FORMAT);
     }
 
     public function testSecondsBetween(): void
