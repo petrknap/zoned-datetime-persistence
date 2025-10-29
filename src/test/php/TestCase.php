@@ -37,8 +37,11 @@ abstract class TestCase extends Base
     {
         parent::setUp();
 
-        $this->localDateTime = JavaSe8\Time::localDateTime(new DateTimeImmutable(self::LOCAL_DATETIME));
-        $this->zonedDateTime = JavaSe8\Time::zonedDateTime(new DateTimeImmutable(self::ZONED_DATETIME));
+        $this->localDateTime = new DateTimeImmutable(
+            self::LOCAL_DATETIME,
+            JavaSe8\Time::zoneOffset(JavaSe8\Time::LOCAL_DATETIME_OFFSET),
+        );
+        $this->zonedDateTime = new DateTimeImmutable(self::ZONED_DATETIME);
         $this->utcDateTime = $this->zonedDateTime->setTimezone(new DateTimeZone('UTC'));
     }
 

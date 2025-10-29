@@ -4,20 +4,48 @@ declare(strict_types=1);
 
 namespace PetrKnap\ZonedDateTimePersistence\JavaSe8;
 
+use DateTime;
 use PetrKnap\ZonedDateTimePersistence\TestCase;
 
 final class TimeTest extends TestCase
 {
-    public function testToLocalDateTimeWorks(): void
+    public function testToInstant(): void
     {
-        $localDateTime = Time::toLocalDateTime($this->zonedDateTime);
+        self::assertDateTimeEquals(
+            $this->zonedDateTime,
+            Time::toInstant($this->localDateTime, self::ZONED_DATETIME_OFFSET),
+        );
+    }
 
-        self::assertSame([
-            'formated' => $this->zonedDateTime->format(self::LOCAL_DATETIME_PATTERN),
-            'timestamp' => $this->zonedDateTime->getTimestamp() + self::ZONED_DATETIME_OFFSET,
-        ], [
-            'formated' => $localDateTime->format(self::LOCAL_DATETIME_PATTERN),
-            'timestamp' => $localDateTime->getTimestamp(),
-        ], 'Formated values must be the same, but timestamps must be shifted by an offset.');
+    public function testToLocalDateTime(): void
+    {
+        self::assertDateTimeEquals(
+            $this->localDateTime,
+            Time::toLocalDateTime($this->zonedDateTime),
+        );
+    }
+
+    public function testLocalDateTime(): void
+    {
+        self::assertDateTimeEquals(
+            $this->localDateTime,
+            Time::localDateTime(new DateTime(self::LOCAL_DATETIME)),
+        );
+    }
+
+    public function testZoneDateTime(): void
+    {
+        self::assertDateTimeEquals(
+            $this->zonedDateTime,
+            Time::zonedDateTime(new DateTime(self::ZONED_DATETIME)),
+        );
+    }
+
+    public function testZoneOffset(): void
+    {
+        self::assertEquals(
+            self::ZONED_DATETIME_OFFSET,
+            Time::zoneOffset(self::ZONED_DATETIME_OFFSET)->getOffset(new DateTime()),
+        );
     }
 }
