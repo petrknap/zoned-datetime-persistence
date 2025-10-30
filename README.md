@@ -9,11 +9,11 @@ This package solves that by providing tools to work with date-time as a couple o
 
 
 
-## Date-time with UTC companion
+## Local date-time with UTC companion
 
-The **most useful** thing is to save date-time with its UTC companion.
-This makes it possible to **work with date and time directly in SQL**.
-The original date is perfect for grouping and filtering, while UTC time is needed for correct sorting.
+The **most useful** thing is to save local date-time with its UTC companion.
+This makes it possible to **work with date-time directly in SQL**.
+The original date-time is perfect for grouping and filtering, while UTC date-time is needed for correct sorting.
 
 ```php
 use PetrKnap\ZonedDateTimePersistence\LocalDateTimeWithUtcCompanion;
