@@ -13,13 +13,13 @@ final class DateTimeUtilsTest extends TestCase {
     }
 
     @Test void parseAsLocalDateTime() {
-        assertEquals(localDateTime, DateTimeUtils.parseAsLocalDateTime(LOCAL_DATETIME, LOCAL_DATETIME_PATTERN));
+        assertEquals(localDateTime, DateTimeUtils.parseAsLocalDateTime(LOCAL_DATETIME, LOCAL_DATETIME_FORMAT));
     }
 
-    @Test void parseAsLocalDateTime_throws_on_incorrect_text() {
+    @Test void parseAsLocalDateTime_throws_on_incorrect_datetime() {
         assertThrows(
                 DateTimeUtils.Exception.CouldNotParseAsLocalDateTime.class,
-                () -> DateTimeUtils.parseAsLocalDateTime("this is not a date", LOCAL_DATETIME_PATTERN)
+                () -> DateTimeUtils.parseAsLocalDateTime("this is not a local date-time", LOCAL_DATETIME_FORMAT)
         );
     }
 

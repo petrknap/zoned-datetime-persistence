@@ -38,14 +38,11 @@ final class DateTimeUtils
      *
      * @throws Exception\DateTimeUtilsCouldNotParseAsLocalDateTime
      */
-    public static function parseAsLocalDateTime(string $text, string $pattern): DateTimeImmutable
+    public static function parseAsLocalDateTime(string $datetime, string $format): DateTimeImmutable
     {
         return JavaSe8\Time::localDateTime(
-            DateTimeImmutable::createFromFormat($pattern, $text)
-                ?: throw new Exception\DateTimeUtilsCouldNotParseAsLocalDateTime(
-                    text: $text,
-                    pattern: $pattern,
-                ),
+            DateTimeImmutable::createFromFormat($format, $datetime)
+                ?: throw new Exception\DateTimeUtilsCouldNotParseAsLocalDateTime($datetime, $format, DateTimeImmutable::class),
         );
     }
 

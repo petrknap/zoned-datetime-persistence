@@ -5,7 +5,6 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 import java.time.temporal.Temporal;
 
 final class DateTimeUtils {
@@ -22,11 +21,11 @@ final class DateTimeUtils {
                 .toZonedDateTime();
     }
 
-    public static LocalDateTime parseAsLocalDateTime(CharSequence text, String pattern) throws Exception.CouldNotParseAsLocalDateTime {
+    public static LocalDateTime parseAsLocalDateTime(CharSequence datetime, String format) throws Exception.CouldNotParseAsLocalDateTime {
         try {
-            return LocalDateTime.parse(text, DateTimeFormatter.ofPattern(pattern));
-        } catch (DateTimeParseException|IllegalArgumentException cause) {
-            throw new Exception.CouldNotParseAsLocalDateTime(text, pattern, cause);
+            return LocalDateTime.parse(datetime, DateTimeFormatter.ofPattern(format));
+        } catch (Throwable cause) {
+            throw new Exception.CouldNotParseAsLocalDateTime(datetime, format, cause);
         }
     }
 
@@ -36,17 +35,27 @@ final class DateTimeUtils {
 
     interface Exception {
         final class CouldNotParseAsLocalDateTime extends RuntimeException implements Exception {
-            public final String text;
-            public final String pattern;
+            private final transient CharSequence datetime;
+            private final String format;
 
-            public CouldNotParseAsLocalDateTime(CharSequence text, String pattern, Throwable cause) {
+            public CouldNotParseAsLocalDateTime(CharSequence datetime, String format, Throwable cause) {
                 super(String.format(
-                        "Could not parse CharSequence(%d) as %s",
-                        text.length(),
-                        pattern
+                        "Could not parse the given datetime of %s(%d) as %s using format `%s`",
+                        datetime.getClass().getName(),
+                        datetime.length(),
+                        LocalDateTime.class.getName(),
+                        format
                 ), cause);
-                this.text = text.toString();
-                this.pattern = pattern;
+                this.datetime = datetime;
+                this.format = format;
+            }
+
+            public CharSequence getDatetime() {
+                return datetime;
+            }
+
+            public String getFormat() {
+                return format;
             }
         }
     }

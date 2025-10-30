@@ -9,13 +9,25 @@ use RuntimeException;
 final class DateTimeUtilsCouldNotParseAsLocalDateTime extends RuntimeException implements DateTimeUtilsException
 {
     public function __construct(
-        public readonly string $text,
-        public readonly string $pattern,
+        private readonly string $datetime,
+        private readonly string $format,
+        string $localDateTimeType,
     ) {
         parent::__construct(sprintf(
-            'Could not parse string(%d) as %s',
-            strlen($text),
-            $pattern,
+            'Could not parse the given datetime of string(%d) as %s using format `%s`',
+            strlen($datetime),
+            $localDateTimeType,
+            $format,
         ));
+    }
+
+    public function getDatetime(): string
+    {
+        return $this->datetime;
+    }
+
+    public function getFormat(): string
+    {
+        return $this->format;
     }
 }

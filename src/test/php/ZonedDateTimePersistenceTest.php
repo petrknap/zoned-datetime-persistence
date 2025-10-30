@@ -35,8 +35,8 @@ final class ZonedDateTimePersistenceTest extends TestCase
             $this->zonedDateTime,
             ZonedDateTimePersistence::computeZonedDateTime(
                 self::LOCAL_DATETIME,
-                JavaSe8\Time::localDateTime($this->utcDateTime)->format(self::LOCAL_DATETIME_PATTERN),
-                self::LOCAL_DATETIME_PATTERN,
+                JavaSe8\Time::localDateTime($this->utcDateTime)->format(self::LOCAL_DATETIME_FORMAT),
+                self::LOCAL_DATETIME_FORMAT,
             ),
         );
     }
