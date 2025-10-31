@@ -12,14 +12,30 @@ final class LocalDateTimeWithUtcCompanionTest extends TestCase {
         assertAll(
                 () -> assertEquals(
                         localDateTime,
-                        localDateTimeWithUtcCompanion.localDateTime,
+                        localDateTimeWithUtcCompanion.getLocalDateTime(),
                         "Incorrect local date-time"
                 ),
                 () -> assertEquals(
                         utcDateTime.toLocalDateTime(),
-                        localDateTimeWithUtcCompanion.utcCompanion,
+                        localDateTimeWithUtcCompanion.getUtcCompanion(),
                         "Incorrect UTC companion"
                 )
+        );
+    }
+
+    @Test void getLocalDateTime_as_formatted_string() {
+        assertEquals(
+                localDateTimeFormatter.format(localDateTime),
+                new LocalDateTimeWithUtcCompanion(zonedDateTime)
+                        .getLocalDateTime(LOCAL_DATETIME_FORMAT)
+        );
+    }
+
+    @Test void getUtcCompanion_as_formatted_string() {
+        assertEquals(
+                localDateTimeFormatter.format(utcDateTime),
+                new LocalDateTimeWithUtcCompanion(zonedDateTime)
+                        .getUtcCompanion(LOCAL_DATETIME_FORMAT)
         );
     }
 

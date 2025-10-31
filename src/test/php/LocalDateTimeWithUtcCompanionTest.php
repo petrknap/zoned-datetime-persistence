@@ -12,12 +12,12 @@ final class LocalDateTimeWithUtcCompanionTest extends TestCase
 
         self::assertDateTimeEquals(
             $this->localDateTime,
-            $localDateTimeWithUtcCompanion->localDateTime,
+            $localDateTimeWithUtcCompanion->getLocalDateTime(),
             "Incorrect local date-time",
         );
         self::assertDateTimeEquals(
             JavaSe8\Time::toLocalDateTime($this->utcDateTime),
-            $localDateTimeWithUtcCompanion->utcCompanion,
+            $localDateTimeWithUtcCompanion->getUtcCompanion(),
             "Incorrect UTC companion",
         );
     }

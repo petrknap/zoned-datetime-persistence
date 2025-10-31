@@ -13,6 +13,9 @@
     "allow-plugins": false,
     "sort-packages": true
   },
+  "conflict": {
+    "doctrine/orm": "<3|>=4"
+  },
   "description": "Timezone aware date-time persistence",
   "funding": [
     {
@@ -22,7 +25,9 @@
   ],
   "homepage": "https://github.com/petrknap/zoned-datetime-persistence",
   "keywords": [
+    "DQL",
     "DateTime",
+    "Doctrine",
     "SQL",
     "Timezone",
     "ZonedDateTime",
@@ -38,6 +43,7 @@
     "php": ">=8.1"
   },
   "require-dev": {
+    "doctrine/orm": "^3.0",
     "nunomaduro/phpinsights": "^2.11",
     "petrknap/shorts": "^3.0",
     "phpstan/phpstan": "^1.12",
