@@ -15,41 +15,51 @@ The **most useful** thing is to save local date-time with its UTC companion.
 This makes it possible to **work with date-time directly in SQL**.
 The original date-time is perfect for grouping and filtering, while UTC date-time is needed for correct sorting.
 
+### How to use it
+
+There is **support for Doctrine**, [see `Some\Note`](./src/test/php/Some/Note.php), or
+you can also **use it manually**.
+
 ```php
-use PetrKnap\ZonedDateTimePersistence\LocalDateTimeWithUtcCompanion;
-use PetrKnap\ZonedDateTimePersistence\ZonedDateTimePersistence;
+namespace PetrKnap\ZonedDateTimePersistence;
 
-$db = new PDO('sqlite::memory:');
-$db->exec('CREATE TABLE notes (created_at DATETIME, created_at__utc DATETIME, content TEXT)');
-$dbDateTimeFormat = 'Y-m-d H:i:s';
+$em = DoctrineTest::prepareEntityManager();
+$conn = $em->getConnection();
 
-$insert = $db->prepare('INSERT INTO notes VALUES (?, ?, ?)');
-# static call usage
-$now = new DateTime('2025-10-26 02:45', new DateTimeZone('CEST'));
-$insert->execute([
-    $now->format($dbDateTimeFormat),
-    ZonedDateTimePersistence::computeUtcCompanion($now)->format($dbDateTimeFormat),
-    'We still have summer time',
-]);
-# record usage
-$now = new LocalDateTimeWithUtcCompanion(new DateTime('2025-10-26 02:15', new DateTimeZone('CET')));
-$insert->execute([
-    $now->localDateTime->format($dbDateTimeFormat),
-    $now->utcCompanion->format($dbDateTimeFormat),
-    'Now we have winter time',
+# ORM insert
+$em->persist(new Some\Note(
+    createdAt: new \DateTime('2025-10-30 23:52'),
+    content: 'Doctrine is supported',
+));
+$em->flush();
+
+# manual insert with static call
+$now = new \DateTime('2025-10-26 02:45', new \DateTimeZone('CEST'));
+$conn->insert('notes', [
+    'created_at__local' => $now->format('Y-m-d H:i:s'),
+    'created_at__utc' => ZonedDateTimePersistence::computeUtcCompanion($now)->format('Y-m-d H:i:s'),
+    'content' => 'We still have summer time',
 ]);
 
-$select = $db->query('SELECT * FROM notes WHERE strftime("%Y", created_at) = "2025" ORDER BY created_at__utc ASC');
-foreach($select->fetchAll(PDO::FETCH_ASSOC) as $note) {
-    printf(
-        '%s: %s' . PHP_EOL,
-        ZonedDateTimePersistence::computeZonedDateTime(
-            $note['created_at'],
-            $note['created_at__utc'],
-            $dbDateTimeFormat,
-        )->format('Y-m-d H:i T'),
-        $note['content'],
-    );
+# manual insert with object instance
+$now = new LocalDateTimeWithUtcCompanion(new \DateTime('2025-10-26 02:15', new \DateTimeZone('CET')));
+$conn->insert('notes', [
+    'created_at__local' => $now->getLocalDateTime('Y-m-d H:i:s'),
+    'created_at__utc' => $now->getUtcCompanion('Y-m-d H:i:s'),
+    'content' => 'Now we have winter time',
+]);
+
+# ORM select
+/** @var Some\Note[] $notes */
+$notes = $em->createQueryBuilder()
+    ->select('note')
+    ->from(Some\Note::class, 'note')
+    ->where('note.createdAt.local BETWEEN :from AND :to')
+    ->orderBy('note.createdAt.utc')
+    ->getQuery()
+    ->execute(['from' => '2025-10-26 00:00', 'to' => '2025-10-26 23:59']);
+foreach($notes as $note) {
+    echo $note->getCreatedAt()->format('Y-m-d H:i T') . ': '. $note->getContent() . PHP_EOL;
 }
 ```
 

@@ -6,6 +6,7 @@ namespace PetrKnap\ZonedDateTimePersistence;
 
 use DateTimeImmutable;
 use DateTimeInterface;
+use Doctrine\ORM\Mapping as ORM;
 use InvalidArgumentException;
 
 /**
@@ -14,28 +15,47 @@ use InvalidArgumentException;
  *
  * @phpstan-type Constructed array{0: LocalDateTime, 1: LocalDateTime}
  */
+#[ORM\Embeddable]
 final class LocalDateTimeWithUtcCompanion
 {
     /**
      * @var LocalDateTime
      */
-    public readonly DateTimeImmutable $localDateTime;
+    #[ORM\Column(type: 'datetime_immutable')]
+    protected readonly DateTimeImmutable $local;
     /**
      * @var LocalDateTime
      */
-    public readonly DateTimeImmutable $utcCompanion;
+    #[ORM\Column(type: 'datetime_immutable')]
+    protected readonly DateTimeImmutable $utc;
 
     public function __construct(
         DateTimeInterface $dateTime,
         DateTimeInterface|null $utcCompanion = null,
     ) {
         if ($utcCompanion === null) {
-            [$this->localDateTime, $this->utcCompanion] = self::constructFromZonedDateTime($dateTime);
+            [$this->local, $this->utc] = self::constructFromZonedDateTime($dateTime);
         } elseif ($dateTime->getOffset() === $utcCompanion->getOffset()) {
-            [$this->localDateTime, $this->utcCompanion] = self::constructFromLocalDateTimes($dateTime, $utcCompanion);
+            [$this->local, $this->utc] = self::constructFromLocalDateTimes($dateTime, $utcCompanion);
         } else {
             throw new InvalidArgumentException('Arguments must be zoned $dateTime, or local $dateTime and $utcCompanion');
         }
+    }
+
+    /**
+     * @return ($format is false ? LocalDateTime : string)
+     */
+    public function getLocalDateTime(string|false $format = false): DateTimeImmutable|string
+    {
+        return $format ? $this->local->format($format) : $this->local;
+    }
+
+    /**
+     * @return ($format is false ? LocalDateTime : string)
+     */
+    public function getUtcCompanion(string|false $format = false): DateTimeImmutable|string
+    {
+        return $format ? $this->utc->format($format) : $this->utc;
     }
 
     /**
@@ -43,7 +63,7 @@ final class LocalDateTimeWithUtcCompanion
      */
     public function toZonedDateTime(): DateTimeImmutable
     {
-        return ZonedDateTimePersistence::computeZonedDateTime($this->localDateTime, $this->utcCompanion);
+        return ZonedDateTimePersistence::computeZonedDateTime($this->local, $this->utc);
     }
 
     /**

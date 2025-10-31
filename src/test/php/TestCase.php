@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace PetrKnap\ZonedDateTimePersistence;
 
 use DateTimeImmutable;
+use DateTimeInterface;
 use DateTimeZone;
 use PHPUnit\Framework\TestCase as Base;
 
@@ -45,18 +46,14 @@ abstract class TestCase extends Base
         $this->utcDateTime = $this->zonedDateTime->setTimezone(new DateTimeZone('UTC'));
     }
 
-    /**
-     * @param LocalDateTime|ZonedDateTime $expected
-     * @param LocalDateTime|ZonedDateTime $actual
-     */
     protected static function assertDateTimeEquals(
-        DateTimeImmutable $expected,
-        DateTimeImmutable $actual,
+        DateTimeInterface $expected,
+        DateTimeInterface $actual,
         string $message = '',
     ): void {
         self::assertSame(
-            $expected->format(self::ZONED_DATETIME_FORMAT),
-            $actual->format(self::ZONED_DATETIME_FORMAT),
+            $expected::class . ' ' . $expected->format(self::ZONED_DATETIME_FORMAT),
+            $actual::class . ' ' . $actual->format(self::ZONED_DATETIME_FORMAT),
             $message,
         );
     }
