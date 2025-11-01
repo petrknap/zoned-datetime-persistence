@@ -32,10 +32,7 @@ final class DoctrineTest extends TestCase
     public function testEmbeddable(): void
     {
         $entityManager = self::prepareEntityManager();
-        $createdNote = new Some\Note(
-            createdAt: $this->zonedDateTime,
-            content: 'test',
-        );
+        $createdNote = new Some\Note($this->zonedDateTime, '');
         $entityManager->persist($createdNote);
         $entityManager->flush();
         $entityManager->clear();
