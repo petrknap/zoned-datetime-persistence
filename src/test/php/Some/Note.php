@@ -14,9 +14,8 @@ final class Note
 {
     #[ORM\Id]
     #[ORM\Column]
-    #[ORM\GeneratedValue]
+    #[ORM\GeneratedValue(strategy: "IDENTITY")]
     protected int|null $id = null;
-
     #[ORM\Embedded(columnPrefix: 'created_at__')]
     protected LocalDateTimeWithUtcCompanion $createdAt;
 
