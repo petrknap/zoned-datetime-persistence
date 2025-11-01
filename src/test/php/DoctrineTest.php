@@ -32,15 +32,19 @@ final class DoctrineTest extends TestCase
     public function testEmbeddable(): void
     {
         $entityManager = self::prepareEntityManager();
-        $createdNote = new Some\Note(
-            createdAt: $this->zonedDateTime,
-            content: 'test',
-        );
+        $createdNote = new Some\Note($this->zonedDateTime, '');
         $entityManager->persist($createdNote);
         $entityManager->flush();
         $entityManager->clear();
 
-        $loadedNote = $entityManager->find(Some\Note::class, $createdNote->getId());
+        $loadedNote = $entityManager
+            ->createQuery(
+                'SELECT note FROM ' . Some\Note::class . ' note' .
+                    ' WHERE note.createdAt.local = :local AND note.createdAt.utc = :utc',
+            )
+            ->setParameter('local', $this->localDateTime)
+            ->setParameter('utc', JavaSe8\Time::toLocalDateTime($this->utcDateTime))
+            ->getSingleResult();
 
         self::assertDateTimeEquals(
             $this->zonedDateTime,
