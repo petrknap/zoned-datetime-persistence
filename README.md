@@ -17,14 +17,15 @@ The original date-time is perfect for grouping and filtering, while UTC date-tim
 
 ### How to use it
 
-There is **support for Doctrine**, [see `Some\Note`](./src/test/php/Some/Note.php), or
-you can also **use it manually**.
+There is support for
+**Jakarta Persistence API** ([see `Note.java`](./src/test/java/some/Note.java)),
+**Doctrine** ([see `Note.php`](./src/test/php/Some/Note.php)),
+and, of course, you can use it manually.
 
 ```php
 namespace PetrKnap\ZonedDateTimePersistence;
 
 $em = DoctrineTest::prepareEntityManager();
-$conn = $em->getConnection();
 
 # ORM insert
 $em->persist(new Some\Note(
@@ -35,7 +36,7 @@ $em->flush();
 
 # manual insert with static call
 $now = new \DateTime('2025-10-26 02:45', new \DateTimeZone('CEST'));
-$conn->insert('notes', [
+$em->getConnection()->insert('notes', [
     'created_at__local' => $now->format('Y-m-d H:i:s'),
     'created_at__utc' => ZonedDateTimePersistence::computeUtcCompanion($now)->format('Y-m-d H:i:s'),
     'content' => 'We still have summer time',
@@ -43,7 +44,7 @@ $conn->insert('notes', [
 
 # manual insert with object instance
 $now = new LocalDateTimeWithUtcCompanion(new \DateTime('2025-10-26 02:15', new \DateTimeZone('CET')));
-$conn->insert('notes', [
+$em->getConnection()->insert('notes', [
     'created_at__local' => $now->getLocalDateTime('Y-m-d H:i:s'),
     'created_at__utc' => $now->getUtcCompanion('Y-m-d H:i:s'),
     'content' => 'Now we have winter time',

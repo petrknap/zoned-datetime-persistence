@@ -1,12 +1,18 @@
 package io.github.petrknap.persistence.zoneddatetime;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Embeddable;
+
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
+@Embeddable
 public final class LocalDateTimeWithUtcCompanion {
-    private final LocalDateTime local;
-    private final LocalDateTime utc;
+    @Column
+    private LocalDateTime local;
+    @Column
+    private LocalDateTime utc;
 
     public LocalDateTimeWithUtcCompanion(LocalDateTime localDateTime, LocalDateTime utcCompanion) {
         this.local = localDateTime;
@@ -16,6 +22,8 @@ public final class LocalDateTimeWithUtcCompanion {
     public LocalDateTimeWithUtcCompanion(ZonedDateTime zonedDateTime) {
         this(zonedDateTime.toLocalDateTime(), ZonedDateTimePersistence.computeUtcCompanion(zonedDateTime));
     }
+
+    private LocalDateTimeWithUtcCompanion() {}
 
     public LocalDateTime getLocalDateTime() {
         return local;
