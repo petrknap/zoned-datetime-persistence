@@ -19,7 +19,7 @@ The original date-time is perfect for grouping and filtering, while UTC date-tim
 
 There is support for
 **Jakarta Persistence API** ([see `Note.java`](./src/test/java/some/Note.java)),
-**Doctrine** ([see `Note.php`](./src/test/php/Some/Note.php)),
+**Doctrine ORM** ([see `Note.php`](./src/test/php/Some/Note.php)),
 and, of course, you can use it manually.
 
 ```php
@@ -66,6 +66,7 @@ foreach($notes as $note) {
 
 ---
 
-Run `composer require petrknap/zoned-datetime-persistence` to install it.
+Add [`io.github.petrknap:zoned-datetime-persistence`](https://jitpack.io/#io.github.petrknap/zoned-datetime-persistence) to your build file.
+Run [`composer require petrknap/zoned-datetime-persistence`](https://packagist.org/packages/petrknap/zoned-datetime-persistence) to install it.
 You can [support this project via donation](https://petrknap.github.io/donate.html).
 The project is licensed under [the terms of the `LGPL-3.0-or-later`](./COPYING.LESSER).
