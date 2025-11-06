@@ -10,7 +10,7 @@ use PHPUnit\Framework\Attributes\Depends;
 
 final class ZonedDateTimePersistenceTest extends TestCase
 {
-    public function testComputeUtcCompanion(): void
+    public function test_computeUtcCompanion(): void
     {
         self::assertDateTimeEquals(
             JavaSe8\Time::localDateTime($this->utcDateTime),
@@ -18,7 +18,7 @@ final class ZonedDateTimePersistenceTest extends TestCase
         );
     }
 
-    public function testComputeUtcCompanionFromStrings(): void
+    public function test_computeZonedDateTime_from_local_DateTimes(): void
     {
         self::assertDateTimeEquals(
             $this->zonedDateTime,
@@ -29,7 +29,7 @@ final class ZonedDateTimePersistenceTest extends TestCase
         );
     }
 
-    public function testComputeZonedDateTimeFromStrings(): void
+    public function test_computeZonedDateTime_from_strings(): void
     {
         self::assertDateTimeEquals(
             $this->zonedDateTime,

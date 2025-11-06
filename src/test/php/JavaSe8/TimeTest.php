@@ -9,7 +9,7 @@ use PetrKnap\ZonedDateTimePersistence\TestCase;
 
 final class TimeTest extends TestCase
 {
-    public function testToInstant(): void
+    public function test_toInstant(): void
     {
         self::assertDateTimeEquals(
             $this->zonedDateTime,
@@ -17,7 +17,7 @@ final class TimeTest extends TestCase
         );
     }
 
-    public function testToLocalDateTime(): void
+    public function test_toLocalDateTime(): void
     {
         self::assertDateTimeEquals(
             $this->localDateTime,
@@ -25,7 +25,7 @@ final class TimeTest extends TestCase
         );
     }
 
-    public function testLocalDateTime(): void
+    public function test_localDateTime(): void
     {
         self::assertDateTimeEquals(
             $this->localDateTime,
@@ -33,7 +33,7 @@ final class TimeTest extends TestCase
         );
     }
 
-    public function testZoneDateTime(): void
+    public function test_zoneDateTime(): void
     {
         self::assertDateTimeEquals(
             $this->zonedDateTime,
@@ -41,7 +41,7 @@ final class TimeTest extends TestCase
         );
     }
 
-    public function testZoneOffset(): void
+    public function test_zoneOffset(): void
     {
         self::assertEquals(
             self::ZONED_DATETIME_OFFSET,

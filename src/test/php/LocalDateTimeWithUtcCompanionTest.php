@@ -6,7 +6,7 @@ namespace PetrKnap\ZonedDateTimePersistence;
 
 final class LocalDateTimeWithUtcCompanionTest extends TestCase
 {
-    public function testConstructsItselfFromZonedDateTime(): void
+    public function test_constructs_itself_from_zoned_DateTime(): void
     {
         $localDateTimeWithUtcCompanion = new LocalDateTimeWithUtcCompanion($this->zonedDateTime);
 
@@ -22,7 +22,25 @@ final class LocalDateTimeWithUtcCompanionTest extends TestCase
         );
     }
 
-    public function testToZonedDateTime(): void
+    public function test_getLocalDateTime_as_formatted_string(): void
+    {
+        self::assertEquals(
+            $this->localDateTime->format(self::LOCAL_DATETIME_FORMAT),
+            (new LocalDateTimeWithUtcCompanion($this->zonedDateTime))
+                ->getLocalDateTime(self::LOCAL_DATETIME_FORMAT),
+        );
+    }
+
+    public function test_getUtcCompanion_as_formatted_string(): void
+    {
+        self::assertEquals(
+            $this->utcDateTime->format(self::LOCAL_DATETIME_FORMAT),
+            (new LocalDateTimeWithUtcCompanion($this->zonedDateTime))
+                ->getUtcCompanion(self::LOCAL_DATETIME_FORMAT),
+        );
+    }
+
+    public function test_toZonedDateTime(): void
     {
         self::assertDateTimeEquals(
             $this->zonedDateTime,
