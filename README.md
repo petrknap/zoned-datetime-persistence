@@ -4,7 +4,7 @@
 [![Packagist](https://img.shields.io/packagist/v/petrknap/zoned-datetime-persistence?style=flat)](https://packagist.org/packages/petrknap/zoned-datetime-persistence)
 
 Many data storage systems (like MySQL) do not natively support storing timezone information alongside date-time values.
-This limitation introduces ambiguity when handling zoned date-times—particularly in applications operating across multiple timezones or even within a single timezone that observes multiple offsets (e.g. due to daylight saving time).
+This limitation introduces ambiguity when handling zoned date-times — particularly in applications operating across multiple timezones or even within a single timezone that observes multiple offsets (e.g. due to daylight saving time).
 
 This package addresses the issue by providing tools that treat zoned date-time as a pair consisting of:
 - the local date-time value, and
