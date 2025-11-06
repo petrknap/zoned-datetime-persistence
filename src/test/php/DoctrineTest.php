@@ -29,7 +29,7 @@ final class DoctrineTest extends TestCase
         return $entityManager;
     }
 
-    public function testEmbeddable(): void
+    public function test_embeddable(): void
     {
         $entityManager = self::prepareEntityManager();
         $createdNote = new Some\Note($this->zonedDateTime, '');

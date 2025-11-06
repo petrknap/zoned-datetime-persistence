@@ -8,7 +8,7 @@ use DateInterval;
 
 final class DateTimeUtilsTest extends TestCase
 {
-    public function testAsUtcInstantAtOffset(): void
+    public function test_asUtcInstantAtOffset(): void
     {
         self::assertEquals(
             $this->utcDateTime->add(new DateInterval('PT' . self::ZONED_DATETIME_OFFSET . 'S'))->getTimestamp(),
@@ -16,7 +16,7 @@ final class DateTimeUtilsTest extends TestCase
         );
     }
 
-    public function testParseAsLocalDateTime(): void
+    public function test_parseAsLocalDateTime(): void
     {
         self::assertDateTimeEquals(
             $this->localDateTime,
@@ -24,14 +24,14 @@ final class DateTimeUtilsTest extends TestCase
         );
     }
 
-    public function testParseAsLocalDateTimeThrowsOnIncorrectDatetime(): void
+    public function test_parseAsLocalDateTime_throws_on_incorrect_datetime(): void
     {
         self::expectException(Exception\DateTimeUtilsCouldNotParseAsLocalDateTime::class);
 
         DateTimeUtils::parseAsLocalDateTime('this is not a local date-time', self::LOCAL_DATETIME_FORMAT);
     }
 
-    public function testSecondsBetween(): void
+    public function test_secondsBetween(): void
     {
         self::assertEquals(
             self::ZONED_DATETIME_OFFSET,

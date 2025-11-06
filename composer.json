@@ -53,7 +53,8 @@
   "scripts": {
     "test": "phpunit --colors=always --testdox src/test",
     "check-implementation": [
-      "phpcs --colors --standard=PSR12 --exclude=Generic.Files.LineLength src/main/php src/test",
+      "phpcs --colors --standard=PSR12 --exclude=Generic.Files.LineLength src/main/php",
+      "phpcs --colors --standard=PSR12 --exclude=Generic.Files.LineLength,PSR1.Methods.CamelCapsMethodName src/test",
       "phpstan analyse --level max src/main/php --ansi --no-interaction",
       "phpstan analyse --level 5 src/test --ansi --no-interaction",
       "phpinsights analyse src/main/php src/test --ansi --no-interaction --format=github-action | sed -e \"s#::error file=$PWD/#::notice file=#g\""

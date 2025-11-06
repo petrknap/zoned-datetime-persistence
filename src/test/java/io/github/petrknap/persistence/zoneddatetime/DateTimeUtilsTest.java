@@ -13,7 +13,10 @@ final class DateTimeUtilsTest extends TestCase {
     }
 
     @Test void parseAsLocalDateTime() {
-        assertEquals(localDateTime, DateTimeUtils.parseAsLocalDateTime(LOCAL_DATETIME, LOCAL_DATETIME_FORMAT));
+        assertEquals(
+                localDateTime,
+                DateTimeUtils.parseAsLocalDateTime(LOCAL_DATETIME, LOCAL_DATETIME_FORMAT)
+        );
     }
 
     @Test void parseAsLocalDateTime_throws_on_incorrect_datetime() {
@@ -24,6 +27,9 @@ final class DateTimeUtilsTest extends TestCase {
     }
 
     @Test void secondsBetween() {
-        assertEquals(ZONED_DATETIME_OFFSET, DateTimeUtils.secondsBetween(utcDateTime.toLocalDateTime(), localDateTime));
+        assertEquals(
+                ZONED_DATETIME_OFFSET,
+                DateTimeUtils.secondsBetween(utcDateTime.toLocalDateTime(), localDateTime)
+        );
     }
 }
