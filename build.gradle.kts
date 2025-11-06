@@ -14,7 +14,7 @@ exec {
 
 description = "Timezone aware date-time persistence"
 group = "io.github.petrknap"
-version = gitTag.toString().trim().removePrefix("v")
+version = gitTag.toString().trim()
 if (version == "") {
     version = (gitBranch.toString().trim() + "-SNAPSHOT").removePrefix("-")
 }
