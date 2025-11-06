@@ -1,40 +1,43 @@
 # Timezone aware date-time persistence
 
-Most SQL databases (like MySQL) do not natively support storing time zone information alongside `DATETIME` / `TIMESTAMP` values.
-This leads to ambiguity when saving date-time, especially in applications running in multiple timezones.
+[![JitPack](https://jitpack.io/v/io.github.petrknap/zoned-datetime-persistence.svg?style=flat)](https://jitpack.io/#io.github.petrknap/zoned-datetime-persistence)
+[![Packagist](https://img.shields.io/packagist/v/petrknap/zoned-datetime-persistence?style=flat)](https://packagist.org/packages/petrknap/zoned-datetime-persistence)
 
-This package solves that by providing tools to work with date-time as a couple of:
-- the date-time value in timezone of source data, and
-- the companion value which holds the timezone information on the other side.
+Many data storage systems (like MySQL) do not natively support storing timezone information alongside date-time values.
+This limitation introduces ambiguity when handling zoned date-times—particularly in applications operating across multiple timezones or even within a single timezone that observes multiple offsets (e.g. due to daylight saving time).
+
+This package addresses the issue by providing tools that treat zoned date-time as a pair consisting of:
+- the local date-time value, and
+- a companion value that explicitly captures the corresponding timezone information.
 
 
 
 ## Local date-time with UTC companion
 
-The **most useful** thing is to save local date-time with its UTC companion.
-This makes it possible to **work with date-time directly in SQL**.
-The original date-time is perfect for grouping and filtering, while UTC date-time is needed for correct sorting.
+The **most effective** approach is to store the local date-time together with its UTC counterpart.
+This dual representation enables **seamless manipulation** of date-time values directly **within storage system**.
+The local date-time is ideal for grouping and filtering based on user or business context, while the UTC value ensures consistent and accurate sorting across timezones.
 
 ### How to use it
 
-There is support for
-**Jakarta Persistence API** ([see `Note.java`](./src/test/java/some/Note.java)),
-**Doctrine ORM** ([see `Note.php`](./src/test/php/Some/Note.php)),
-and, of course, you can use it manually.
+There is built-in support for
+the **Jakarta Persistence API** ([see `Note.java`](./src/test/java/some/Note.java)),
+the **Doctrine ORM** ([see `Note.php`](./src/test/php/Some/Note.php)),
+and, of course, it **can be integrated manually** into any project, giving you full flexibility to adapt it to your specific needs.
 
 ```php
 namespace PetrKnap\ZonedDateTimePersistence;
 
 $em = DoctrineTest::prepareEntityManager();
 
-# ORM insert
+# persist entity
 $em->persist(new Some\Note(
     createdAt: new \DateTime('2025-10-30 23:52'),
     content: 'Doctrine is supported',
 ));
 $em->flush();
 
-# manual insert with static call
+# insert data manually (static call)
 $now = new \DateTime('2025-10-26 02:45', new \DateTimeZone('CEST'));
 $em->getConnection()->insert('notes', [
     'created_at__local' => $now->format('Y-m-d H:i:s'),
@@ -42,7 +45,7 @@ $em->getConnection()->insert('notes', [
     'content' => 'We still have summer time',
 ]);
 
-# manual insert with object instance
+# insert data manually (object instance)
 $now = new LocalDateTimeWithUtcCompanion(new \DateTime('2025-10-26 02:15', new \DateTimeZone('CET')));
 $em->getConnection()->insert('notes', [
     'created_at__local' => $now->getLocalDateTime('Y-m-d H:i:s'),
@@ -50,8 +53,7 @@ $em->getConnection()->insert('notes', [
     'content' => 'Now we have winter time',
 ]);
 
-# ORM select
-/** @var Some\Note[] $notes */
+# select entities
 $notes = $em->createQueryBuilder()
     ->select('note')
     ->from(Some\Note::class, 'note')
@@ -66,7 +68,5 @@ foreach($notes as $note) {
 
 ---
 
-Add [`io.github.petrknap:zoned-datetime-persistence`](https://jitpack.io/#io.github.petrknap/zoned-datetime-persistence) to your build file.
-Run [`composer require petrknap/zoned-datetime-persistence`](https://packagist.org/packages/petrknap/zoned-datetime-persistence) to install it.
 You can [support this project via donation](https://petrknap.github.io/donate.html).
 The project is licensed under [the terms of the `LGPL-3.0-or-later`](./COPYING.LESSER).
