@@ -6,7 +6,7 @@ namespace PetrKnap\ZonedDateTimePersistence\Some;
 
 use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
-use PetrKnap\ZonedDateTimePersistence\LocalDateTimeWithUtcCompanion;
+use PetrKnap\ZonedDateTimePersistence\UtcWithLocal;
 
 #[ORM\Entity]
 #[ORM\Table(name: 'notes')]
@@ -14,17 +14,17 @@ final class Note
 {
     #[ORM\Id]
     #[ORM\Column]
-    #[ORM\GeneratedValue(strategy: "IDENTITY")]
+    #[ORM\GeneratedValue(strategy: 'IDENTITY')]
     protected int|null $id = null;
     #[ORM\Embedded(columnPrefix: 'created_at__')]
-    protected LocalDateTimeWithUtcCompanion $createdAt;
+    protected UtcWithLocal $createdAt;
 
     public function __construct(
         DateTimeInterface $createdAt,
         #[ORM\Column(name: 'content')]
         protected string $content,
     ) {
-        $this->createdAt = new LocalDateTimeWithUtcCompanion($createdAt);
+        $this->createdAt = new UtcWithLocal($createdAt);
     }
 
     public function getId(): int|null
