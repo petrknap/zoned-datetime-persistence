@@ -21,7 +21,7 @@ final class ZonedDateTimePersistence
     /**
      * @return LocalDateTime
      */
-    public static function computeUtcCompanion(DateTimeInterface $zonedDateTime): DateTimeImmutable
+    public static function computeUtcDateTime(DateTimeInterface $zonedDateTime): DateTimeImmutable
     {
         return JavaSe8\Time::toLocalDateTime(
             JavaSe8\Time::zonedDateTime($zonedDateTime)->setTimezone(new DateTimeZone('UTC')),
@@ -29,32 +29,32 @@ final class ZonedDateTimePersistence
     }
 
     /**
+     * @param ($format is null ? DateTimeInterface : string) $utcDateTime
      * @param ($format is null ? DateTimeInterface : string) $localDateTime
-     * @param ($format is null ? DateTimeInterface : string) $utcCompanion
      *
      * @return ZonedDateTime
      *
      * @throws Exception\ZonedDateTimePersistenceCouldNotComputeZonedDateTime
      */
     public static function computeZonedDateTime(
+        DateTimeInterface|string $utcDateTime,
         DateTimeInterface|string $localDateTime,
-        DateTimeInterface|string $utcCompanion,
         string|null $format = null,
     ): DateTimeImmutable {
         if ($format === null) {
+            $utcDateTime = JavaSe8\Time::localDateTime($utcDateTime);
             $localDateTime = JavaSe8\Time::localDateTime($localDateTime);
-            $utcCompanion = JavaSe8\Time::localDateTime($utcCompanion);
         } else {
             try {
+                $utcDateTime = DateTimeUtils::parseAsLocalDateTime($utcDateTime, $format);
                 $localDateTime = DateTimeUtils::parseAsLocalDateTime($localDateTime, $format);
-                $utcCompanion = DateTimeUtils::parseAsLocalDateTime($utcCompanion, $format);
             } catch (Exception\DateTimeUtilsCouldNotParseAsLocalDateTime $cause) {
                 throw new Exception\ZonedDateTimePersistenceCouldNotComputeZonedDateTime($cause);
             }
         }
         return DateTimeUtils::asUtcInstantAtOffset(
-            $utcCompanion,
-            DateTimeUtils::secondsBetween($utcCompanion, $localDateTime),
+            $utcDateTime,
+            DateTimeUtils::secondsBetween($utcDateTime, $localDateTime),
         );
     }
 }
