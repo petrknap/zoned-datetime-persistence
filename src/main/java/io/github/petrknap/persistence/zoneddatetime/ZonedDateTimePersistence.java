@@ -8,22 +8,22 @@ public final class ZonedDateTimePersistence {
     private ZonedDateTimePersistence() {
     }
 
-    public static LocalDateTime computeUtcCompanion(ZonedDateTime zonedDateTime) {
+    public static LocalDateTime computeUtcDateTime(ZonedDateTime zonedDateTime) {
         return zonedDateTime.withZoneSameInstant(ZoneId.of("UTC")).toLocalDateTime();
     }
 
-    public static ZonedDateTime computeZonedDateTime(LocalDateTime localDateTime, LocalDateTime utcCompanion) {
+    public static ZonedDateTime computeZonedDateTime(LocalDateTime utcDateTime, LocalDateTime localDateTime) {
         return DateTimeUtils.asUtcInstantAtOffset(
-                utcCompanion,
-                DateTimeUtils.secondsBetween(utcCompanion, localDateTime)
+                utcDateTime,
+                DateTimeUtils.secondsBetween(utcDateTime, localDateTime)
         );
     }
 
-    public static ZonedDateTime computeZonedDateTime(CharSequence localDateTime, CharSequence utcCompanion, String pattern) throws Exception.CouldNotComputeZonedDateTime {
+    public static ZonedDateTime computeZonedDateTime(CharSequence utcDateTime, CharSequence localDateTime, String format) throws Exception.CouldNotComputeZonedDateTime {
         try {
             return computeZonedDateTime(
-                    DateTimeUtils.parseAsLocalDateTime(localDateTime, pattern),
-                    DateTimeUtils.parseAsLocalDateTime(utcCompanion, pattern)
+                    DateTimeUtils.parseAsLocalDateTime(utcDateTime, format),
+                    DateTimeUtils.parseAsLocalDateTime(localDateTime, format)
             );
         } catch (DateTimeUtils.Exception.CouldNotParseAsLocalDateTime cause) {
             throw new Exception.CouldNotComputeZonedDateTime(cause);

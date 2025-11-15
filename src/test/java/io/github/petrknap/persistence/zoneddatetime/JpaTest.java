@@ -26,11 +26,11 @@ final class JpaTest extends TestCase {
         some.Note loadedNote = entityManager
                 .createQuery(
                         "SELECT note FROM " + some.Note.class.getName() + " note" +
-                                " WHERE note.createdAt.local = :local AND note.createdAt.utc = :utc",
+                                " WHERE note.createdAt.utc = :utc AND note.createdAt.local = :local",
                         some.Note.class
                 )
-                .setParameter("local", localDateTime)
                 .setParameter("utc", utcDateTime.toLocalDateTime())
+                .setParameter("local", localDateTime)
                 .getSingleResult();
 
         assertEquals(

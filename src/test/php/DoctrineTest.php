@@ -40,10 +40,10 @@ final class DoctrineTest extends TestCase
         $loadedNote = $entityManager
             ->createQuery(
                 'SELECT note FROM ' . Some\Note::class . ' note' .
-                    ' WHERE note.createdAt.local = :local AND note.createdAt.utc = :utc',
+                    ' WHERE note.createdAt.utc = :utc AND note.createdAt.local = :local',
             )
-            ->setParameter('local', $this->localDateTime)
             ->setParameter('utc', JavaSe8\Time::toLocalDateTime($this->utcDateTime))
+            ->setParameter('local', $this->localDateTime)
             ->getSingleResult();
 
         self::assertDateTimeEquals(
