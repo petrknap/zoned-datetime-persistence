@@ -29,7 +29,7 @@ final class DoctrineTest extends TestCase
         return $entityManager;
     }
 
-    public function test_embeddable(): void
+    public function test_embeddables(): void
     {
         $entityManager = self::prepareEntityManager();
         $createdNote = new Some\Note($this->zonedDateTime, 'test');
@@ -41,6 +41,7 @@ final class DoctrineTest extends TestCase
                 'SELECT note FROM ' . Some\Note::class . ' note' .
                     " WHERE note.content = 'test'" .
                     ' AND note.createdAt.utc = :utc AND note.createdAt.local = :local' .
+                    ' AND note.createdAt2.utc = :utc' .
                     ' AND note.updatedAt.utc IS NULL',
             )
             ->setParameter('utc', JavaSe8\Time::toLocalDateTime($this->utcDateTime))

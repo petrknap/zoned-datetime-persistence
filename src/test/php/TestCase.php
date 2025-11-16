@@ -34,6 +34,23 @@ abstract class TestCase extends Base
      */
     protected DateTimeImmutable $utcDateTime;
 
+    private static string $originalSystemTimezone;
+
+    public static function setUpBeforeClass(): void
+    {
+        parent::setUpBeforeClass();
+
+        self::$originalSystemTimezone = date_default_timezone_get();
+        date_default_timezone_set('Etc/GMT-2');
+    }
+
+    public static function tearDownAfterClass(): void
+    {
+        parent::tearDownAfterClass();
+
+        date_default_timezone_set(self::$originalSystemTimezone);
+    }
+
     protected function setUp(): void
     {
         parent::setUp();

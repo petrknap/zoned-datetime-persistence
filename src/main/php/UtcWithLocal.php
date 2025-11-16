@@ -9,8 +9,9 @@ use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
+ * Stores zoned date-time as `utc` date-time with `local` date-time
+ *
  * @phpstan-import-type LocalDateTime from JavaSe8\Time
- * @phpstan-import-type ZonedDateTime from JavaSe8\Time
  */
 #[ORM\Embeddable]
 final class UtcWithLocal extends Utc
@@ -39,14 +40,11 @@ final class UtcWithLocal extends Utc
         return $format ? $this->local->format($format) : $this->local;
     }
 
-    /**
-     * @return ZonedDateTime
-     */
     public function toZonedDateTime(): DateTimeImmutable
     {
         return ZonedDateTimePersistence::computeZonedDateTime(
             $this->getUtcDateTime(),
-            $this->getLocalDateTime(),
+            localDateTime: $this->getLocalDateTime(),
         );
     }
 }

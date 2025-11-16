@@ -19,7 +19,7 @@ final class JpaTest extends TestCase {
         return entityManager;
     }
 
-    @Test void embeddable() {
+    @Test void embeddables() {
         EntityManager entityManager = prepareEntityManager();
         some.Note createdNote = new some.Note(zonedDateTime, "test");
         entityManager.persist(createdNote);
@@ -30,6 +30,7 @@ final class JpaTest extends TestCase {
                         "SELECT note FROM " + some.Note.class.getName() + " note" +
                                 " WHERE note.content = 'test'" +
                                 " AND note.createdAt.utc = :utc AND note.createdAt.local = :local" +
+                                " AND note.createdAt2.utc = :utc" +
                                 " AND note.updatedAt.utc IS NULL",
                         some.Note.class
                 )
