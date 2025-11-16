@@ -1,6 +1,6 @@
 package some;
 
-import io.github.petrknap.persistence.zoneddatetime.LocalDateTimeWithUtcCompanion;
+import io.github.petrknap.persistence.zoneddatetime.UtcWithLocal;
 import jakarta.persistence.*;
 
 import java.time.ZonedDateTime;
@@ -13,12 +13,16 @@ public class Note {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Embedded
-    private LocalDateTimeWithUtcCompanion createdAt;
+    @AttributeOverrides({
+            @AttributeOverride(name = "utc", column = @Column(name = "created_at__utc")),
+            @AttributeOverride(name = "local", column = @Column(name = "created_at__local"))
+    })
+    private UtcWithLocal createdAt;
     @Column
     private String content;
 
     public Note(ZonedDateTime createdAt, String content) {
-        this.createdAt = new LocalDateTimeWithUtcCompanion(createdAt);
+        this.createdAt = new UtcWithLocal(createdAt);
         this.content = content;
     }
 

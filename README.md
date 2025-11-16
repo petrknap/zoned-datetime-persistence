@@ -7,14 +7,14 @@ Many data storage systems (like MySQL) do not natively support storing timezone 
 This limitation introduces ambiguity when handling zoned date-times — particularly in applications operating across multiple timezones or even within a single timezone that observes multiple offsets (e.g. due to daylight saving time).
 
 This package addresses the issue by providing tools that treat zoned date-time as a pair consisting of:
-- the local date-time value, and
+- the UTC date-time value, and
 - a companion value that explicitly captures the corresponding timezone information.
 
 
 
-## Local date-time with UTC companion
+## UTC with local date-times
 
-The **most effective** approach is to store the local date-time together with its UTC counterpart.
+The **most effective** approach is to store the UTC date-time together with its local counterpart.
 This dual representation enables **seamless manipulation** of date-time values directly **within storage system**.
 The local date-time is ideal for grouping and filtering based on user or business context, while the UTC value ensures consistent and accurate sorting across timezones.
 
@@ -40,16 +40,16 @@ $em->flush();
 # insert data manually (static call)
 $now = new \DateTime('2025-10-26 02:45', new \DateTimeZone('CEST'));
 $em->getConnection()->insert('notes', [
+    'created_at__utc' => ZonedDateTimePersistence::computeUtcDateTime($now)->format('Y-m-d H:i:s'),
     'created_at__local' => $now->format('Y-m-d H:i:s'),
-    'created_at__utc' => ZonedDateTimePersistence::computeUtcCompanion($now)->format('Y-m-d H:i:s'),
     'content' => 'We still have summer time',
 ]);
 
 # insert data manually (object instance)
-$now = new LocalDateTimeWithUtcCompanion(new \DateTime('2025-10-26 02:15', new \DateTimeZone('CET')));
+$now = new UtcWithLocal(new \DateTime('2025-10-26 02:15', new \DateTimeZone('CET')));
 $em->getConnection()->insert('notes', [
+    'created_at__utc' => $now->getUtcDateTime('Y-m-d H:i:s'),
     'created_at__local' => $now->getLocalDateTime('Y-m-d H:i:s'),
-    'created_at__utc' => $now->getUtcCompanion('Y-m-d H:i:s'),
     'content' => 'Now we have winter time',
 ]);
 

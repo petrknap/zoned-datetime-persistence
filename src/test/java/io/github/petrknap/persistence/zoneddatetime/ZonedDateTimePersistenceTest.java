@@ -5,29 +5,29 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 final class ZonedDateTimePersistenceTest extends TestCase {
-    @Test void computeUtcCompanion() {
+    @Test void computeUtcDateTime() {
         assertEquals(
                 utcDateTime.toLocalDateTime(),
-                ZonedDateTimePersistence.computeUtcCompanion(zonedDateTime)
+                ZonedDateTimePersistence.computeUtcDateTime(zonedDateTime)
         );
     }
 
-    @Test void computeZonedDateTime_from_LocalDateTimes() {
+    @Test void computeZonedDateTime_from_utc_and_local_date_time_instances() {
         assertEquals(
                 zonedDateTime,
                 ZonedDateTimePersistence.computeZonedDateTime(
-                        localDateTime,
-                        utcDateTime.toLocalDateTime()
+                        utcDateTime.toLocalDateTime(),
+                        localDateTime
                 )
         );
     }
 
-    @Test void computeZonedDateTime_from_Strings() {
+    @Test void computeZonedDateTime_from_utc_and_local_date_time_strings() {
         assertEquals(
                 zonedDateTime,
                 ZonedDateTimePersistence.computeZonedDateTime(
-                        LOCAL_DATETIME,
                         utcDateTime.toLocalDateTime().format(localDateTimeFormatter),
+                        LOCAL_DATETIME,
                         LOCAL_DATETIME_FORMAT
                 )
         );
