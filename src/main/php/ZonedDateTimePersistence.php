@@ -23,41 +23,64 @@ final class ZonedDateTimePersistence
      */
     public static function computeUtcDateTime(DateTimeInterface|null $zonedDateTime): DateTimeImmutable|null
     {
-        return $zonedDateTime !== null ? JavaSe8\Time::toLocalDateTime(
-            JavaSe8\Time::zonedDateTime($zonedDateTime)->setTimezone(new DateTimeZone('UTC')),
-        ) : null;
+        return $zonedDateTime !== null
+            ? JavaSe8\Time::toLocalDateTime(JavaSe8\Time::zonedDateTime($zonedDateTime)->setTimezone(new DateTimeZone('UTC')))
+            : null;
     }
 
     /**
-     * @param ($format is null ? DateTimeInterface|null : string|null) $utcDateTime
-     * @param ($format is null ? DateTimeInterface|null : string|null) $localDateTime
+     * @note use named arguments for arguments after `$_`, {@see https://www.php.net/manual/en/functions.arguments.php#functions.named-arguments}
+     *
+     * @param null $_ named arguments separator
      *
      * @return ($utcDateTime is null ? null : ZonedDateTime)
      *
      * @throws Exception\ZonedDateTimePersistenceCouldNotComputeZonedDateTime
      */
     public static function computeZonedDateTime(
-        DateTimeInterface|string|null $utcDateTime,
-        DateTimeInterface|string|null $localDateTime,
-        string|null $format = null,
+        DateTimeInterface|null $utcDateTime,
+        $_ = null,
+        DateTimeInterface|null $localDateTime = null,
+        DateTimeZone|null $timezone = null,
     ): DateTimeImmutable|null {
-        if ($utcDateTime === null || $localDateTime === null) {
-            return null;
-        }
-        if ($format === null) {
-            $utcDateTime = JavaSe8\Time::localDateTime($utcDateTime);
-            $localDateTime = JavaSe8\Time::localDateTime($localDateTime);
-        } else {
-            try {
-                $utcDateTime = DateTimeUtils::parseAsLocalDateTime($utcDateTime, $format);
-                $localDateTime = DateTimeUtils::parseAsLocalDateTime($localDateTime, $format);
-            } catch (Exception\DateTimeUtilsCouldNotParseAsLocalDateTime $cause) {
-                throw new Exception\ZonedDateTimePersistenceCouldNotComputeZonedDateTime($cause);
-            }
-        }
-        return DateTimeUtils::asUtcInstantAtOffset(
+        $utcDateTime = JavaSe8\Time::localDateTime($utcDateTime);
+        $localDateTime = JavaSe8\Time::localDateTime($localDateTime);
+
+        return match (true) {
+            $localDateTime !== null => self::computeZonedDateTimeFromUtcDateTimeAndLocalDateTime($utcDateTime, $localDateTime),
+            $timezone !== null => self::computeZonedDateTimeFromUtcDateTimeAndTimezone($utcDateTime, $timezone),
+            default => $utcDateTime === null ? null : throw new \InvalidArgumentException(),
+        };
+    }
+
+    /**
+     * @param LocalDateTime|null $utcDateTime
+     * @param LocalDateTime|null $localDateTime
+     *
+     * @return ZonedDateTime|null
+     */
+    private static function computeZonedDateTimeFromUtcDateTimeAndLocalDateTime(
+        DateTimeImmutable|null $utcDateTime,
+        DateTimeImmutable|null $localDateTime,
+    ): DateTimeImmutable|null {
+        return $utcDateTime !== null && $localDateTime !== null ? DateTimeUtils::asUtcInstantAtOffset(
             $utcDateTime,
             DateTimeUtils::secondsBetween($utcDateTime, $localDateTime),
-        );
+        ) : null;
+    }
+
+    /**
+     * @param LocalDateTime|null $utcDateTime
+     *
+     * @return ZonedDateTime|null
+     */
+    private static function computeZonedDateTimeFromUtcDateTimeAndTimezone(
+        DateTimeImmutable|null $utcDateTime,
+        DateTimeZone|null $timezone = null,
+    ): DateTimeImmutable|null {
+        return $utcDateTime !== null && $timezone !== null ? DateTimeUtils::asUtcInstantAtOffset(
+            $utcDateTime,
+            0,
+        )->setTimezone($timezone) : null;
     }
 }

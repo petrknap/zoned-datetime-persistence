@@ -4,11 +4,28 @@ declare(strict_types=1);
 
 namespace PetrKnap\ZonedDateTimePersistence;
 
-use DateTimeInterface;
+use DateTimeImmutable;
 
+/**
+ * @phpstan-import-type ZonedDateTime from JavaSe8\Time
+ */
 abstract class UtcTestCase extends TestCase
 {
     abstract public function test_constructs_itself(): void;
+
+    /**
+     * @note use arguments typed as scalars
+     */
+    abstract public function test_ofValues_as_scalars(): void;
+
+    abstract public function test_ofValues_as_scalars_of_null(): void;
+
+    /**
+     * @note use arguments typed AS IS in embeddable
+     */
+    abstract public function test_ofValues_as_embedded(): void;
+
+    abstract public function test_ofValues_as_embedded_of_null(): void;
 
     public function test_asNullable_returns_this(): void
     {
@@ -33,5 +50,8 @@ abstract class UtcTestCase extends TestCase
         );
     }
 
-    abstract protected function getInstance(DateTimeInterface $zonedDateTime): Utc;
+    /**
+     * @param ZonedDateTime $zonedDateTime
+     */
+    abstract protected function getInstance(DateTimeImmutable $zonedDateTime): Utc;
 }

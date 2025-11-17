@@ -1,6 +1,7 @@
 package some;
 
 import io.github.petrknap.persistence.zoneddatetime.UtcWithLocal;
+import io.github.petrknap.persistence.zoneddatetime.UtcWithTimezone;
 import jakarta.persistence.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -9,19 +10,39 @@ import java.time.ZonedDateTime;
 
 @Entity
 @Table(name = "notes")
-final public class Note {
+final public class Note
+{
     @Id
     @Column
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private @Nullable Long id;
+
+    /**
+     * Example: utc date-time with local date-time
+     */
     @Embedded
     @AttributeOverrides({
             @AttributeOverride(name = "utc", column = @Column(name = "created_at__utc")),
             @AttributeOverride(name = "local", column = @Column(name = "created_at__local"))
     })
     private @NotNull UtcWithLocal createdAt;
+
+    /**
+     * Example: utc date-time with timezone identifier
+     */
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "utc", column = @Column(name = "created_at_2__utc")),
+            @AttributeOverride(name = "timezone", column = @Column(name = "created_at_2__timezone"))
+    })
+    private @NotNull UtcWithTimezone createdAt2;
+
+    /**
+     * Example: nullable embeddable
+     */
     @Embedded
     private @Nullable UtcWithLocal updatedAt;
+
     @Column(nullable = false)
     private @NotNull String content;
 
@@ -30,6 +51,7 @@ final public class Note {
             @NotNull String content
     ) {
         this.createdAt = new UtcWithLocal(createdAt);
+        this.createdAt2 = new UtcWithTimezone(createdAt);
         this.content = content;
     }
 

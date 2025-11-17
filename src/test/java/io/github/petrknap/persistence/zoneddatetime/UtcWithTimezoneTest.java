@@ -5,73 +5,67 @@ import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
-final class UtcWithLocalTest extends UtcTestCase
+final class UtcWithTimezoneTest extends UtcTestCase
 {
     @Override @Test void constructs_itself()
     {
         assertInstance(
                 getInstance(zonedDateTime),
                 utcDateTime.toLocalDateTime(),
-                localDateTime
+                zonedDateTime.getZone()
         );
     }
 
     @Override @Test void ofValues_as_scalars()
     {
         assertInstance(
-                UtcWithLocal.ofValues(
+                UtcWithTimezone.ofValues(
                         localDateTimeFormatter.format(utcDateTime),
-                        LOCAL_DATETIME,
+                        zonedDateTime.getZone().getId(),
                         LOCAL_DATETIME_FORMAT
                 ),
                 utcDateTime.toLocalDateTime(),
-                localDateTime
+                zonedDateTime.getZone()
         );
     }
 
     @Override @Test void ofValues_as_scalars_of_null()
     {
-        assertNull(UtcWithLocal.ofValues(null, null, LOCAL_DATETIME_FORMAT));
+        assertNull(UtcWithTimezone.ofValues(null, null, LOCAL_DATETIME_FORMAT));
     }
 
     @Override @Test void ofValues_as_embedded()
     {
         assertInstance(
-                UtcWithLocal.ofValues(
+                UtcWithTimezone.ofValues(
                         utcDateTime.toLocalDateTime(),
-                        localDateTime
+                        zonedDateTime.getZone().getId()
                 ),
                 utcDateTime.toLocalDateTime(),
-                localDateTime
+                zonedDateTime.getZone()
         );
     }
 
     @Override @Test void ofValues_as_embedded_of_null()
     {
-        assertNull(UtcWithLocal.ofValues(null, null));
+        assertNull(UtcWithTimezone.ofValues(null, null));
     }
 
-    @Test void getLocalDateTime_as_formatted_string()
+    @Override protected @NotNull UtcWithTimezone getInstance(@NotNull ZonedDateTime zonedDateTime)
     {
-        assertEquals(
-                localDateTimeFormatter.format(localDateTime),
-                getInstance(zonedDateTime).getLocalDateTime(LOCAL_DATETIME_FORMAT)
-        );
-    }
-
-    @Override protected @NotNull UtcWithLocal getInstance(@NotNull ZonedDateTime zonedDateTime)
-    {
-        return new UtcWithLocal(zonedDateTime);
+        return new UtcWithTimezone(zonedDateTime);
     }
 
     private static void assertInstance(
-            @Nullable UtcWithLocal actual,
+            @Nullable UtcWithTimezone actual,
             @NotNull LocalDateTime expectedUtcDateTime,
-            @NotNull LocalDateTime expectedLocalDateTime
+            @NotNull ZoneId expectedTimezone
     ) {
         assertNotNull(actual);
         assertAll(
@@ -81,9 +75,9 @@ final class UtcWithLocalTest extends UtcTestCase
                         "Unexpected UTC date-time"
                 ),
                 () -> assertEquals(
-                        expectedLocalDateTime,
-                        actual.getLocalDateTime(),
-                        "Unexpected local date-time"
+                        expectedTimezone,
+                        actual.getTimezone(),
+                        "Unexpected timezone"
                 )
         );
     }

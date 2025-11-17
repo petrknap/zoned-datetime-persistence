@@ -12,13 +12,22 @@ This package addresses the issue by providing tools that treat zoned date-time a
 
 
 
-## UTC with local date-times
+## Embeddables
 
-The **most effective** approach is to store the UTC date-time together with its local counterpart.
+- [UTC with local date-time](#utc-with-local-date-time)
+  - [How to use it](#how-to-use-it)
+- [UTC with timezone](#utc-with-timezone)
+
+
+### UTC with local date-time
+
+> `UtcWithLocal`
+
+The **most useful** approach is to store the **UTC date-time together with its local counterpart**.
 This dual representation enables **seamless manipulation** of date-time values directly **within storage system**.
 The local date-time is ideal for grouping and filtering based on user or business context, while the UTC value ensures consistent and accurate sorting across timezones.
 
-### How to use it
+#### How to use it
 
 There is built-in support for
 the **Jakarta Persistence API** ([see `Note.java`](./src/test/java/some/Note.java)),
@@ -64,6 +73,38 @@ $notes = $em->createQueryBuilder()
 foreach($notes as $note) {
     echo $note->getCreatedAt()->format('Y-m-d H:i T') . ': '. $note->getContent() . PHP_EOL;
 }
+```
+```
+2025-10-26 02:45 GMT+0200: We still have summer time
+2025-10-26 02:15 GMT+0100: Now we have winter time
+```
+
+
+### UTC with timezone
+
+> `UtcWithTimezone`
+
+If you want to **preserve the original timezone as is**, you cannot use [`UtcWithLocal`](#utc-with-local-date-time), because it works over fixed offsets.
+In this case, you need to use this implementation.
+It is especially handful during daylight saving time transitions.
+
+```php
+namespace PetrKnap\ZonedDateTimePersistence;
+
+$now = (new \DateTime('2025-03-30 01:45', new \DateTimeZone('Europe/Prague')));
+
+echo 'UtcWithTimezone: ' . (new UtcWithTimezone($now))
+    ->toZonedDateTime()
+    ->modify('+1 hour')
+    ->format('Y-m-d H:i T' . PHP_EOL);
+echo 'UtcWithLocal:    ' . (new UtcWithLocal($now))
+    ->toZonedDateTime()
+    ->modify('+1 hour')
+    ->format('Y-m-d H:i T' . PHP_EOL);
+```
+```
+UtcWithTimezone: 2025-03-30 03:45 CEST
+UtcWithLocal:    2025-03-30 02:45 GMT+0100
 ```
 
 ---
