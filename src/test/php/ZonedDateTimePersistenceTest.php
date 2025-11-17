@@ -13,6 +13,10 @@ final class ZonedDateTimePersistenceTest extends TestCase
             ZonedDateTimePersistence::computeUtcDateTime($this->zonedDateTime),
         );
     }
+    public function test_computeUtcDateTime_from_zoned_date_time_instance_of_null(): void
+    {
+        self::assertNull(ZonedDateTimePersistence::computeUtcDateTime(null));
+    }
 
     public function test_computeUtcDateTime_from_zoned_date_time_instance_of_null(): void
     {
