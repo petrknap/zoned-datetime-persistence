@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace PetrKnap\ZonedDateTimePersistence;
 
 use Doctrine\DBAL\DriverManager;
+use Doctrine\DBAL\Types\Type;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\ORMSetup;
 use Doctrine\ORM\Tools\SchemaTool;
@@ -13,6 +14,9 @@ final class DoctrineTest extends TestCase
 {
     public static function prepareEntityManager(): EntityManager
     {
+        if (!Type::hasType(UtcDateTimeType::NAME)) {
+            Type::addType(UtcDateTimeType::NAME, UtcDateTimeType::class);
+        }
         $config = ORMSetup::createAttributeMetadataConfiguration([
             __DIR__,
         ], isDevMode: true);
@@ -27,6 +31,45 @@ final class DoctrineTest extends TestCase
             $entityManager->getClassMetadata(Some\Note::class),
         ]);
         return $entityManager;
+    }
+
+    public function test_custom_mapping_type(): void
+    {
+        $entityManager = self::prepareEntityManager();
+        $createdNote = new Some\Note($this->zonedDateTime, 'test');
+        $entityManager->persist($createdNote);
+        $entityManager->flush();
+        $entityManager->clear();
+        $loadedNote = $entityManager
+            ->createQuery(
+                'SELECT note FROM ' . Some\Note::class . ' note' .
+                " WHERE note.content = 'test'" .
+                ' AND note.createdAtUtc = :utc' .
+                ' AND note.createdAtUtc != :zoned' . // @todo wait until Doctrine ORM fixes this issue and change it to `=`
+                ' AND note.updatedAtUtc IS NULL',
+            )
+            ->setParameter('utc', $this->utcDateTime)
+            ->setParameter('zoned', $this->zonedDateTime)
+            ->getSingleResult();
+
+        self::assertDateTimeEquals(
+            $this->utcDateTime,
+            $createdNote->createdAtUtc,
+            'Unexpected createdNote.createdAtUtc',
+        );
+        self::assertNull(
+            $createdNote->updatedAtUtc,
+            'Unexpected createdNote.updatedAtUtc',
+        );
+        self::assertDateTimeEquals(
+            $this->utcDateTime,
+            $loadedNote->createdAtUtc,
+            'Unexpected loadedNote.createdAtUtc',
+        );
+        self::assertNull(
+            $loadedNote->updatedAtUtc,
+            'Unexpected loadedNote.updatedAtUtc',
+        );
     }
 
     public function test_embeddables(): void

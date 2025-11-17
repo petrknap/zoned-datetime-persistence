@@ -2,10 +2,12 @@ package some;
 
 import io.github.petrknap.persistence.zoneddatetime.UtcWithLocal;
 import io.github.petrknap.persistence.zoneddatetime.UtcWithTimezone;
+import io.github.petrknap.persistence.zoneddatetime.UtcDateTimeConverter;
 import jakarta.persistence.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
 @Entity
@@ -43,6 +45,20 @@ final public class Note
     @Embedded
     private @Nullable UtcWithLocal updatedAt;
 
+    /**
+     * Example: utc date-time
+     */
+    @Column(nullable = false)
+    @Convert(converter = UtcDateTimeConverter.class)
+    public @NotNull ZonedDateTime createdAtUtc;
+
+    /**
+     * Example: nullable converter
+     */
+    @Column
+    @Convert(converter = UtcDateTimeConverter.class)
+    public @Nullable ZonedDateTime updatedAtUtc;
+
     @Column(nullable = false)
     private @NotNull String content;
 
@@ -52,6 +68,7 @@ final public class Note
     ) {
         this.createdAt = new UtcWithLocal(createdAt);
         this.createdAt2 = new UtcWithTimezone(createdAt);
+        this.createdAtUtc = createdAt.withZoneSameInstant(ZoneId.of("UTC"));
         this.content = content;
     }
 
@@ -76,5 +93,6 @@ final public class Note
     public void setContent(@NotNull String content) {
         this.content = content;
         updatedAt = new UtcWithLocal(ZonedDateTime.now());
+        updatedAtUtc = ZonedDateTime.now(ZoneId.of("UTC"));
     }
 }

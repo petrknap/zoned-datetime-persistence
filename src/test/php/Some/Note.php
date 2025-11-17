@@ -6,9 +6,11 @@ namespace PetrKnap\ZonedDateTimePersistence\Some;
 
 use DateTimeImmutable;
 use DateTimeInterface;
+use DateTimeZone;
 use Doctrine\ORM\Mapping as ORM;
 use PetrKnap\ZonedDateTimePersistence\UtcWithLocal;
 use PetrKnap\ZonedDateTimePersistence\UtcWithTimezone;
+use PetrKnap\ZonedDateTimePersistence\UtcDateTimeType;
 
 #[ORM\Entity]
 #[ORM\HasLifecycleCallbacks]
@@ -38,6 +40,18 @@ final class Note
     #[ORM\Embedded]
     protected UtcWithLocal|null $updatedAt = null;
 
+    /**
+     * Example: utc date-time
+     */
+    #[ORM\Column(name: 'created_at_utc', type: UtcDateTimeType::NAME, nullable: true)] // nullable for testing purposes only
+    public DateTimeInterface $createdAtUtc;
+
+    /**
+     * Example: nullable type
+     */
+    #[ORM\Column(name: 'updated_at_utc', type: UtcDateTimeType::NAME, nullable: true)]
+    public DateTimeInterface|null $updatedAtUtc = null;
+
     public function __construct(
         DateTimeInterface $createdAt,
         #[ORM\Column(name: 'content', nullable: false)]
@@ -45,6 +59,7 @@ final class Note
     ) {
         $this->createdAt = new UtcWithLocal($createdAt);
         $this->createdAt2 = new UtcWithTimezone($createdAt);
+        $this->createdAtUtc = DateTimeImmutable::createFromInterface($createdAt)->setTimezone(new DateTimeZone('UTC'));
     }
 
     /**
@@ -80,5 +95,6 @@ final class Note
     {
         $this->content = $content;
         $this->updatedAt = new UtcWithLocal(new DateTimeImmutable('now'));
+        $this->updatedAtUtc = new DateTimeImmutable('now', new DateTimeZone('UTC'));
     }
 }

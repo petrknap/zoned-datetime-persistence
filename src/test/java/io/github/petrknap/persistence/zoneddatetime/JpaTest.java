@@ -21,6 +21,48 @@ final class JpaTest extends TestCase
         return entityManager;
     }
 
+    @Test void attribute_converter()
+    {
+        EntityManager entityManager = prepareEntityManager();
+        some.Note createdNote = new some.Note(zonedDateTime, "test");
+        entityManager.persist(createdNote);
+        entityManager.flush();
+        entityManager.clear();
+        some.Note loadedNote = entityManager
+                .createQuery(
+                        "SELECT note FROM " + some.Note.class.getName() + " note" +
+                                " WHERE note.content = 'test'" +
+                                " AND note.createdAtUtc = :utc" +
+                                " AND note.createdAtUtc = :zoned" +
+                                " AND note.updatedAtUtc IS NULL",
+                        some.Note.class
+                )
+                .setParameter("utc", utcDateTime)
+                .setParameter("zoned", zonedDateTime)
+                .getSingleResult();
+
+        assertAll(
+                () -> assertEquals(
+                        utcDateTime,
+                        createdNote.createdAtUtc,
+                        "Unexpected createdNote.createdAtUtc"
+                ),
+                () -> assertNull(
+                        createdNote.updatedAtUtc,
+                        "Unexpected createdNote.updatedAtUtc"
+                ),
+                () -> assertEquals(
+                        utcDateTime,
+                        loadedNote.createdAtUtc,
+                        "Unexpected loadedNote.createdAtUtc"
+                ),
+                () -> assertNull(
+                        loadedNote.updatedAtUtc,
+                        "Unexpected loadedNote.updatedAtUtc"
+                )
+        );
+    }
+
     @Test void embeddables()
     {
         EntityManager entityManager = prepareEntityManager();
