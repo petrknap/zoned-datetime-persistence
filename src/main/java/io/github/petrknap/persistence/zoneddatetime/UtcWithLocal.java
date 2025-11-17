@@ -9,32 +9,67 @@ import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
+/**
+ * Stores zoned date-time as `utc` date-time with `local` date-time
+ */
 @Embeddable
-public final class UtcWithLocal extends Utc<UtcWithLocal> {
+public final class UtcWithLocal extends Utc<UtcWithLocal>
+{
     @Column(nullable = true)
     private @Nullable LocalDateTime local;
 
-    public UtcWithLocal(@NotNull ZonedDateTime zonedDateTime) {
+    public UtcWithLocal(@NotNull ZonedDateTime zonedDateTime)
+    {
         super(zonedDateTime);
         local = zonedDateTime.toLocalDateTime();
     }
 
-    private UtcWithLocal() {
+    private UtcWithLocal()
+    {
         super();
     }
 
-    public @NotNull LocalDateTime getLocalDateTime() {
+    public static @Nullable UtcWithLocal fromStored(
+            @Nullable CharSequence utcDateTime,
+            @Nullable CharSequence localDateTime,
+            @NotNull String dateTimeFormat
+    ) {
+        return fromStored(
+                utcDateTime != null ? DateTimeUtils.parseAsLocalDateTime(utcDateTime, dateTimeFormat) : null,
+                localDateTime != null ? DateTimeUtils.parseAsLocalDateTime(localDateTime, dateTimeFormat) : null
+        );
+    }
+
+    public static @Nullable UtcWithLocal fromStored(
+            @Nullable LocalDateTime utcDateTime,
+            @Nullable LocalDateTime localDateTime
+    ) {
+        ZonedDateTime zonedDateTime = ZonedDateTimePersistence.computeZonedDateTime(
+                utcDateTime,
+                localDateTime
+        );
+
+        return zonedDateTime != null ? new UtcWithLocal(zonedDateTime) : null;
+    }
+
+    public @NotNull LocalDateTime getLocalDateTime()
+    {
         if (local == null) {
             thisInstanceShouldBeNull();
         }
         return local;
     }
 
-    public @NotNull String getLocalDateTime(@NotNull String format) {
+    public @NotNull String getLocalDateTime(@NotNull String format)
+    {
         return DateTimeFormatter.ofPattern(format).format(getLocalDateTime());
     }
 
-    public @NotNull ZonedDateTime toZonedDateTime() {
-        return ZonedDateTimePersistence.computeZonedDateTime(getUtcDateTime(), getLocalDateTime());
+    public @NotNull ZonedDateTime toZonedDateTime()
+    {
+        return ZonedDateTimePersistence.computeZonedDateTime(
+                getUtcDateTime(),
+                getLocalDateTime()
+        );
     }
 }

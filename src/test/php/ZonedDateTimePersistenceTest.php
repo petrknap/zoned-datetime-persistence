@@ -25,30 +25,29 @@ final class ZonedDateTimePersistenceTest extends TestCase
             $this->zonedDateTime,
             ZonedDateTimePersistence::computeZonedDateTime(
                 JavaSe8\Time::localDateTime($this->utcDateTime),
-                $this->localDateTime,
+                localDateTime: $this->localDateTime,
             ),
         );
     }
 
     public function test_computeZonedDateTime_from_utc_and_local_date_time_instances_of_null(): void
     {
-        self::assertNull(ZonedDateTimePersistence::computeZonedDateTime(null, null));
+        self::assertNull(ZonedDateTimePersistence::computeZonedDateTime(null, localDateTime: null));
     }
 
-    public function test_computeZonedDateTime_from_utc_and_local_date_time_strings(): void
+    public function test_computeZonedDateTime_from_utc_date_time_and_timezone_instances(): void
     {
         self::assertDateTimeEquals(
             $this->zonedDateTime,
             ZonedDateTimePersistence::computeZonedDateTime(
-                JavaSe8\Time::localDateTime($this->utcDateTime)->format(self::LOCAL_DATETIME_FORMAT),
-                self::LOCAL_DATETIME,
-                self::LOCAL_DATETIME_FORMAT,
+                JavaSe8\Time::localDateTime($this->utcDateTime),
+                timezone: $this->zonedDateTime->getTimezone(),
             ),
         );
     }
 
-    public function test_computeZonedDateTime_from_utc_and_local_date_time_strings_of_null(): void
+    public function test_computeZonedDateTime_from_utc_date_time_and_timezone_instances_of_null(): void
     {
-        self::assertNull(ZonedDateTimePersistence::computeZonedDateTime(null, null, self::LOCAL_DATETIME_FORMAT));
+        self::assertNull(ZonedDateTimePersistence::computeZonedDateTime(null, timezone: null));
     }
 }
