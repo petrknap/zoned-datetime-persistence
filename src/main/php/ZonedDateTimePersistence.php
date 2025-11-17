@@ -19,28 +19,31 @@ final class ZonedDateTimePersistence
     }
 
     /**
-     * @return LocalDateTime
+     * @return ($zonedDateTime is null ? null : LocalDateTime)
      */
-    public static function computeUtcDateTime(DateTimeInterface $zonedDateTime): DateTimeImmutable
+    public static function computeUtcDateTime(DateTimeInterface|null $zonedDateTime): DateTimeImmutable|null
     {
-        return JavaSe8\Time::toLocalDateTime(
+        return $zonedDateTime !== null ? JavaSe8\Time::toLocalDateTime(
             JavaSe8\Time::zonedDateTime($zonedDateTime)->setTimezone(new DateTimeZone('UTC')),
-        );
+        ) : null;
     }
 
     /**
-     * @param ($format is null ? DateTimeInterface : string) $utcDateTime
-     * @param ($format is null ? DateTimeInterface : string) $localDateTime
+     * @param ($format is null ? DateTimeInterface|null : string|null) $utcDateTime
+     * @param ($format is null ? DateTimeInterface|null : string|null) $localDateTime
      *
-     * @return ZonedDateTime
+     * @return ($utcDateTime is null ? null : ZonedDateTime)
      *
      * @throws Exception\ZonedDateTimePersistenceCouldNotComputeZonedDateTime
      */
     public static function computeZonedDateTime(
-        DateTimeInterface|string $utcDateTime,
-        DateTimeInterface|string $localDateTime,
+        DateTimeInterface|string|null $utcDateTime,
+        DateTimeInterface|string|null $localDateTime,
         string|null $format = null,
-    ): DateTimeImmutable {
+    ): DateTimeImmutable|null {
+        if ($utcDateTime === null || $localDateTime === null) {
+            return null;
+        }
         if ($format === null) {
             $utcDateTime = JavaSe8\Time::localDateTime($utcDateTime);
             $localDateTime = JavaSe8\Time::localDateTime($localDateTime);

@@ -30,6 +30,7 @@ repositories {
 
 dependencies {
     implementation(libs.jakarta.persistence.api)
+    implementation(libs.jetbrains.annotations)
     testImplementation(libs.hibernate.core)
     testImplementation(libs.hibernate.dialects)
     testImplementation(libs.junit.jupiter)

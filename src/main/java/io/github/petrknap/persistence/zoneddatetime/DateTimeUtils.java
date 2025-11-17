@@ -1,5 +1,7 @@
 package io.github.petrknap.persistence.zoneddatetime;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -14,14 +16,20 @@ final class DateTimeUtils {
     /**
      * @param offset seconds
      */
-    public static ZonedDateTime asUtcInstantAtOffset(LocalDateTime localDateTime, int offset) {
+    public static @NotNull ZonedDateTime asUtcInstantAtOffset(
+            @NotNull LocalDateTime localDateTime,
+            int offset
+    ) {
         return localDateTime
                 .toInstant(ZoneOffset.UTC)
                 .atOffset(ZoneOffset.ofTotalSeconds(offset))
                 .toZonedDateTime();
     }
 
-    public static LocalDateTime parseAsLocalDateTime(CharSequence datetime, String format) throws Exception.CouldNotParseAsLocalDateTime {
+    public static @NotNull LocalDateTime parseAsLocalDateTime(
+            @NotNull CharSequence datetime,
+            @NotNull String format
+    ) throws Exception.CouldNotParseAsLocalDateTime {
         try {
             return LocalDateTime.parse(datetime, DateTimeFormatter.ofPattern(format));
         } catch (Throwable cause) {
@@ -29,7 +37,10 @@ final class DateTimeUtils {
         }
     }
 
-    public static int secondsBetween(Temporal startInclusive, Temporal endExclusive) {
+    public static int secondsBetween(
+            @NotNull Temporal startInclusive,
+            @NotNull Temporal endExclusive
+    ) {
         return (int) Duration.between(startInclusive, endExclusive).getSeconds();
     }
 
@@ -38,7 +49,11 @@ final class DateTimeUtils {
             private final transient CharSequence datetime;
             private final String format;
 
-            public CouldNotParseAsLocalDateTime(CharSequence datetime, String format, Throwable cause) {
+            public CouldNotParseAsLocalDateTime(
+                    @NotNull CharSequence datetime,
+                    @NotNull String format,
+                    @NotNull Throwable cause
+            ) {
                 super(String.format(
                         "Could not parse the given datetime of %s(%d) as %s using format `%s`",
                         datetime.getClass().getName(),
@@ -50,11 +65,11 @@ final class DateTimeUtils {
                 this.format = format;
             }
 
-            public CharSequence getDatetime() {
+            public @NotNull CharSequence getDatetime() {
                 return datetime;
             }
 
-            public String getFormat() {
+            public @NotNull String getFormat() {
                 return format;
             }
         }

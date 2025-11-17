@@ -1,5 +1,8 @@
 package io.github.petrknap.persistence.zoneddatetime;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -8,23 +11,30 @@ public final class ZonedDateTimePersistence {
     private ZonedDateTimePersistence() {
     }
 
-    public static LocalDateTime computeUtcDateTime(ZonedDateTime zonedDateTime) {
-        return zonedDateTime.withZoneSameInstant(ZoneId.of("UTC")).toLocalDateTime();
+    public static @Nullable LocalDateTime computeUtcDateTime(@Nullable ZonedDateTime zonedDateTime) {
+        return zonedDateTime != null ? zonedDateTime.withZoneSameInstant(ZoneId.of("UTC")).toLocalDateTime() : null;
     }
 
-    public static ZonedDateTime computeZonedDateTime(LocalDateTime utcDateTime, LocalDateTime localDateTime) {
-        return DateTimeUtils.asUtcInstantAtOffset(
+    public static @Nullable ZonedDateTime computeZonedDateTime(
+            @Nullable LocalDateTime utcDateTime,
+            @Nullable LocalDateTime localDateTime
+    ) {
+        return utcDateTime != null && localDateTime != null ? DateTimeUtils.asUtcInstantAtOffset(
                 utcDateTime,
                 DateTimeUtils.secondsBetween(utcDateTime, localDateTime)
-        );
+        ) : null;
     }
 
-    public static ZonedDateTime computeZonedDateTime(CharSequence utcDateTime, CharSequence localDateTime, String format) throws Exception.CouldNotComputeZonedDateTime {
+    public static @Nullable ZonedDateTime computeZonedDateTime(
+            @Nullable CharSequence utcDateTime,
+            @Nullable CharSequence localDateTime,
+            @NotNull String format
+    ) throws Exception.CouldNotComputeZonedDateTime {
         try {
-            return computeZonedDateTime(
+            return utcDateTime != null && localDateTime != null ? computeZonedDateTime(
                     DateTimeUtils.parseAsLocalDateTime(utcDateTime, format),
                     DateTimeUtils.parseAsLocalDateTime(localDateTime, format)
-            );
+            ) : null;
         } catch (DateTimeUtils.Exception.CouldNotParseAsLocalDateTime cause) {
             throw new Exception.CouldNotComputeZonedDateTime(cause);
         }
@@ -32,7 +42,7 @@ public final class ZonedDateTimePersistence {
 
     interface Exception {
         final class CouldNotComputeZonedDateTime extends RuntimeException implements Exception {
-            public CouldNotComputeZonedDateTime(Throwable cause) {
+            public CouldNotComputeZonedDateTime(@NotNull Throwable cause) {
                 super(cause.getMessage(), cause);
             }
         }

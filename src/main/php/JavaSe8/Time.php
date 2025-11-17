@@ -46,20 +46,26 @@ final class Time
     /**
      * `LocalDateTime` factory
      *
-     * @return LocalDateTime
+     * @return ($dateTime is null ? null : LocalDateTime)
      */
-    public static function localDateTime(DateTimeInterface $dateTime): DateTimeImmutable
+    public static function localDateTime(DateTimeInterface|null $dateTime): DateTimeImmutable|null
     {
+        if ($dateTime === null) {
+            return null;
+        }
         return self::toLocalDateTime(self::zonedDateTime($dateTime));
     }
 
     /**
      * `ZonedDateTime` factory
      *
-     * @return ZonedDateTime
+     * @return ($dateTime is null ? null : ZonedDateTime)
      */
-    public static function zonedDateTime(DateTimeInterface $dateTime): DateTimeImmutable
+    public static function zonedDateTime(DateTimeInterface|null $dateTime): DateTimeImmutable|null
     {
+        if ($dateTime === null) {
+            return null;
+        }
         /** @var ZonedDateTime */
         return $dateTime instanceof DateTimeImmutable
             ? $dateTime // this is performance hack - input has correct type

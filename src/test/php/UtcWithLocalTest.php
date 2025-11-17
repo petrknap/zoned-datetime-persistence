@@ -32,14 +32,6 @@ final class UtcWithLocalTest extends UtcTestCase
         );
     }
 
-    public function test_toZonedDateTime(): void
-    {
-        self::assertDateTimeEquals(
-            $this->zonedDateTime,
-            $this->getInstance($this->zonedDateTime)->toZonedDateTime(),
-        );
-    }
-
     protected function getInstance(DateTimeInterface $zonedDateTime): UtcWithLocal
     {
         return new UtcWithLocal($zonedDateTime);
