@@ -18,7 +18,8 @@ This package addresses the issue by providing tools that treat zoned date-time a
 - [UTC with local date-time](#utc-with-local-date-time)
   - [How to use it](#how-to-use-it)
 - [UTC with timezone](#utc-with-timezone)
-- [UTC date-time converter / type / cast](#utc-date-time-converter--type--cast)
+  - [UTC with system timezone](#utc-with-system-timezone)
+  - [UTC date-time converter / type / cast](#utc-date-time-converter--type--cast)
 
 
 ### UTC with local date-time
@@ -109,8 +110,15 @@ UtcWithTimezone: 2025-03-30 03:45 CEST
 UtcWithLocal:    2025-03-30 02:45 GMT+0100
 ```
 
+#### UTC with system timezone
 
-### UTC date-time converter / type / cast
+> `UtcWithSystemTimezone`
+
+The **most compact** approach is to store **only the UTC date-time**.
+This serves as an alternative to MySQL's `TIMESTAMP`, Postgres's `TIMESTAMP WITH TIMEZONE`, or custom ORM types.
+It offers full range of `DateTime`, avoids normalization on connection, adds `.utc` into your queries for better readability and didn't need special configuration.
+
+#### UTC date-time converter / type / cast
 
 > `UtcDateTimeConverter` <sup><small>Jakarta Persistence API</small></sup>
 

@@ -42,6 +42,7 @@ final class EloquentTest extends TestCase
         $createdNote->content = 'test';
         $createdNote->created_at = $zonedDateTime;
         $createdNote->created_at_2 = $zonedDateTime;
+        $createdNote->created_at_3 = $zonedDateTime;
         $createdNote->created_at_utc = $utcDateTime;
         $createdNote->save();
         $loadedNote = Some\NoteModel::query()
@@ -54,6 +55,9 @@ final class EloquentTest extends TestCase
             // Case: UTC date-time with timezone
             ->where('created_at_2__utc', '=', $utcDateTime->format($noteDateFormat))
             ->where('created_at_2__timezone', '=', $zonedDateTime->getTimezone()->getName())
+            // ---------------------------------------------------------------------------------------------------------
+            // Case: UTC date-time with system timezone
+            ->where('created_at_3__utc', '=', $utcDateTime->format($noteDateFormat))
             // ---------------------------------------------------------------------------------------------------------
             // Case: nullable attribute
             ->whereNull('deleted_at__utc')
@@ -90,6 +94,18 @@ final class EloquentTest extends TestCase
             $zonedDateTime,
             $loadedNote->created_at_2,
             'Unexpected loadedNote.created_at_2',
+        );
+        // -------------------------------------------------------------------------------------------------------------
+        // Case: UTC date-time with system timezone
+        self::assertDateTimeEquals(
+            $zonedDateTime,
+            $createdNote->created_at_3,
+            'Unexpected createdNote.created_at_3',
+        );
+        self::assertDateTimeEquals(
+            $zonedDateTime,
+            $loadedNote->created_at_3,
+            'Unexpected loadedNote.created_at_3',
         );
         // -------------------------------------------------------------------------------------------------------------
         // Case: nullable attribute

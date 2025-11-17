@@ -1,5 +1,7 @@
 package io.github.petrknap.persistence.zoneddatetime;
 
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 
@@ -7,6 +9,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.TimeZone;
 
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 abstract class TestCase {
@@ -21,4 +24,15 @@ abstract class TestCase {
     protected final DateTimeFormatter zonedDateTimeFormatter = DateTimeFormatter.ofPattern(ZONED_DATETIME_FORMAT);
     protected final ZonedDateTime zonedDateTime = ZonedDateTime.parse(ZONED_DATETIME, zonedDateTimeFormatter);
     protected final ZonedDateTime utcDateTime = zonedDateTime.withZoneSameInstant(ZoneId.of("UTC"));
+
+    private static ZoneId originalSystemTimezone;
+
+    @BeforeAll static void setUpBeforeClass() {
+        originalSystemTimezone = ZoneId.systemDefault();
+        TimeZone.setDefault(TimeZone.getTimeZone("Etc/GMT-2"));
+    }
+
+    @AfterAll static void tearDownAfterClass() {
+        TimeZone.setDefault(TimeZone.getTimeZone(originalSystemTimezone));
+    }
 }

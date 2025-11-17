@@ -1,6 +1,7 @@
 package some;
 
 import io.github.petrknap.persistence.zoneddatetime.UtcWithLocal;
+import io.github.petrknap.persistence.zoneddatetime.UtcWithSystemTimezone;
 import io.github.petrknap.persistence.zoneddatetime.UtcWithTimezone;
 import io.github.petrknap.persistence.zoneddatetime.UtcDateTimeConverter;
 import jakarta.persistence.*;
@@ -40,6 +41,15 @@ final public class Note
     private @NotNull UtcWithTimezone createdAt2;
 
     /**
+     * Example: UTC date-time with system timezone
+     */
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "utc", column = @Column(name = "created_at_3__utc"))
+    })
+    private @NotNull UtcWithSystemTimezone createdAt3;
+
+    /**
      * Example: nullable embeddable
      */
     @Embedded
@@ -68,21 +78,30 @@ final public class Note
     ) {
         this.createdAt = new UtcWithLocal(createdAt);
         this.createdAt2 = new UtcWithTimezone(createdAt);
+        this.createdAt3 = new UtcWithSystemTimezone(createdAt);
         this.createdAtUtc = createdAt.withZoneSameInstant(ZoneId.of("UTC"));
         this.content = content;
     }
 
     private Note() {}
 
-    public @NotNull ZonedDateTime getCreatedAt() {
+    public @NotNull ZonedDateTime getCreatedAt()
+    {
         return createdAt.toZonedDateTime();
     }
 
-    public @NotNull ZonedDateTime getCreatedAt2() {
+    public @NotNull ZonedDateTime getCreatedAt2()
+    {
         return createdAt2.toZonedDateTime();
     }
 
-    public @Nullable ZonedDateTime getDeletedAt() {
+    public @NotNull ZonedDateTime getCreatedAt3()
+    {
+        return createdAt2.toZonedDateTime();
+    }
+
+    public @Nullable ZonedDateTime getDeletedAt()
+    {
         return deletedAt != null ? deletedAt.toZonedDateTime() : null;
     }
 }

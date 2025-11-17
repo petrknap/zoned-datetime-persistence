@@ -9,6 +9,7 @@ use DateTimeInterface;
 use DateTimeZone;
 use Doctrine\ORM\Mapping as ORM;
 use PetrKnap\ZonedDateTimePersistence\UtcWithLocal;
+use PetrKnap\ZonedDateTimePersistence\UtcWithSystemTimezone;
 use PetrKnap\ZonedDateTimePersistence\UtcWithTimezone;
 use PetrKnap\ZonedDateTimePersistence\UtcDateTimeType;
 
@@ -35,6 +36,12 @@ final class Note
     protected UtcWithTimezone $createdAt2;
 
     /**
+     * Example: UTC date-time with system timezone
+     */
+    #[ORM\Embedded(columnPrefix: 'created_at_3__')]
+    protected UtcWithSystemTimezone $createdAt3;
+
+    /**
      * Example: nullable embeddable
      */
     #[ORM\Embedded(columnPrefix: 'deleted_at__')]
@@ -59,6 +66,7 @@ final class Note
     ) {
         $this->createdAt = new UtcWithLocal($createdAt);
         $this->createdAt2 = new UtcWithTimezone($createdAt);
+        $this->createdAt3 = new UtcWithSystemTimezone($createdAt);
         $this->createdAtUtc = $createdAt->setTimezone(new DateTimeZone('UTC'));
     }
 
@@ -84,6 +92,11 @@ final class Note
     public function getCreatedAt2(): DateTimeInterface
     {
         return $this->createdAt2->toZonedDateTime();
+    }
+
+    public function getCreatedAt3(): DateTimeInterface
+    {
+        return $this->createdAt3->toZonedDateTime();
     }
 
     public function getDeletedAt(): DateTimeInterface|null
