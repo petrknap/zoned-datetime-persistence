@@ -2,41 +2,57 @@ package some;
 
 import io.github.petrknap.persistence.zoneddatetime.UtcWithLocal;
 import jakarta.persistence.*;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.time.ZonedDateTime;
 
 @Entity
 @Table(name = "notes")
-public class Note {
+final public class Note {
     @Id
     @Column
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private @Nullable Long id;
     @Embedded
     @AttributeOverrides({
             @AttributeOverride(name = "utc", column = @Column(name = "created_at__utc")),
             @AttributeOverride(name = "local", column = @Column(name = "created_at__local"))
     })
-    private UtcWithLocal createdAt;
-    @Column
-    private String content;
+    private @NotNull UtcWithLocal createdAt;
+    @Embedded
+    private @Nullable UtcWithLocal updatedAt;
+    @Column(nullable = false)
+    private @NotNull String content;
 
-    public Note(ZonedDateTime createdAt, String content) {
+    public Note(
+            @NotNull ZonedDateTime createdAt,
+            @NotNull String content
+    ) {
         this.createdAt = new UtcWithLocal(createdAt);
         this.content = content;
     }
 
     private Note() {}
 
-    public Long getId() {
+    public @Nullable Long getId() {
         return id;
     }
 
-    public ZonedDateTime getCreatedAt() {
+    public @NotNull ZonedDateTime getCreatedAt() {
         return createdAt.toZonedDateTime();
     }
 
-    public String getContent() {
+    public @Nullable ZonedDateTime getUpdatedAt() {
+        return updatedAt != null ? updatedAt.toZonedDateTime() : null;
+    }
+
+    public @NotNull String getContent() {
         return content;
+    }
+
+    public void setContent(@NotNull String content) {
+        this.content = content;
+        updatedAt = new UtcWithLocal(ZonedDateTime.now());
     }
 }

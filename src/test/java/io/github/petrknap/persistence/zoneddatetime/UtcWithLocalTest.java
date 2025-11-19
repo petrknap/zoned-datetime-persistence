@@ -1,5 +1,6 @@
 package io.github.petrknap.persistence.zoneddatetime;
 
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 
 import java.time.ZonedDateTime;
@@ -32,7 +33,7 @@ final class UtcWithLocalTest extends UtcTestCase {
         );
     }
 
-    @Override protected UtcWithLocal getInstance(ZonedDateTime zonedDateTime) {
+    @Override @NotNull UtcWithLocal getInstance(@NotNull ZonedDateTime zonedDateTime) {
         return new UtcWithLocal(zonedDateTime);
     }
 }

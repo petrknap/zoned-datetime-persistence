@@ -31,6 +31,7 @@ final class TimeTest extends TestCase
             $this->localDateTime,
             Time::localDateTime(new DateTime(self::LOCAL_DATETIME)),
         );
+        self::assertNull(Time::localDateTime(null));
     }
 
     public function test_zoneDateTime(): void
@@ -39,6 +40,7 @@ final class TimeTest extends TestCase
             $this->zonedDateTime,
             Time::zonedDateTime(new DateTime(self::ZONED_DATETIME)),
         );
+        self::assertNull(Time::zonedDateTime(null));
     }
 
     public function test_zoneOffset(): void

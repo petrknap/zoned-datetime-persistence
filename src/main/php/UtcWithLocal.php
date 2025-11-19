@@ -16,10 +16,10 @@ use Doctrine\ORM\Mapping as ORM;
 final class UtcWithLocal extends Utc
 {
     /**
-     * @var LocalDateTime
+     * @var LocalDateTime|null
      */
-    #[ORM\Column(type: 'datetime_immutable')]
-    protected readonly DateTimeImmutable $local;
+    #[ORM\Column(type: 'datetime_immutable', nullable: true)]
+    protected readonly DateTimeImmutable|null $local;
 
     public function __construct(
         DateTimeInterface $zonedDateTime,
@@ -33,6 +33,9 @@ final class UtcWithLocal extends Utc
      */
     public function getLocalDateTime(string|false $format = false): DateTimeImmutable|string
     {
+        if ($this->local === null) {
+            $this->thisInstanceShouldBeNull();
+        }
         return $format ? $this->local->format($format) : $this->local;
     }
 
@@ -41,6 +44,9 @@ final class UtcWithLocal extends Utc
      */
     public function toZonedDateTime(): DateTimeImmutable
     {
-        return ZonedDateTimePersistence::computeZonedDateTime($this->utc, $this->local);
+        return ZonedDateTimePersistence::computeZonedDateTime(
+            $this->getUtcDateTime(),
+            $this->getLocalDateTime(),
+        );
     }
 }

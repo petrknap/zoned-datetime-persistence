@@ -10,6 +10,13 @@ abstract class UtcTestCase extends TestCase
 {
     abstract public function test_constructs_itself(): void;
 
+    public function test_asNullable_returns_this(): void
+    {
+        $instance = $this->getInstance($this->zonedDateTime);
+
+        self::assertSame($instance, $instance->asNullable());
+    }
+
     public function test_getUtcDateTime_as_formatted_string(): void
     {
         self::assertEquals(
