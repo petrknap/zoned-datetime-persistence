@@ -9,6 +9,9 @@ import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
+/**
+ * Stores zoned date-time as `utc` date-time with `local` date-time
+ */
 @Embeddable
 public final class UtcWithLocal extends Utc<UtcWithLocal> {
     @Column(nullable = true)

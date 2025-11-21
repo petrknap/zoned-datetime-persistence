@@ -15,6 +15,23 @@ public final class ZonedDateTimePersistence {
         return zonedDateTime != null ? zonedDateTime.withZoneSameInstant(ZoneId.of("UTC")).toLocalDateTime() : null;
     }
 
+    public static @Nullable ZonedDateTime computeZonedDateTime(@Nullable LocalDateTime utcDateTime) {
+        return utcDateTime != null ? DateTimeUtils.asUtcInstantAtOffset(utcDateTime, 0).withZoneSameInstant(ZoneId.systemDefault().normalized()) : null;
+    }
+
+    public static @Nullable ZonedDateTime computeZonedDateTime(
+            @Nullable CharSequence utcDateTime,
+            @NotNull String format
+    ) throws Exception.CouldNotComputeZonedDateTime {
+        try {
+            return utcDateTime != null ? computeZonedDateTime(
+                    DateTimeUtils.parseAsLocalDateTime(utcDateTime, format)
+            ) : null;
+        } catch (DateTimeUtils.Exception.CouldNotParseAsLocalDateTime cause) {
+            throw new Exception.CouldNotComputeZonedDateTime(cause);
+        }
+    }
+
     public static @Nullable ZonedDateTime computeZonedDateTime(
             @Nullable LocalDateTime utcDateTime,
             @Nullable LocalDateTime localDateTime

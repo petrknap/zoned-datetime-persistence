@@ -8,6 +8,7 @@ use DateTimeImmutable;
 use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
 use PetrKnap\ZonedDateTimePersistence\UtcWithLocal;
+use PetrKnap\ZonedDateTimePersistence\UtcWithSystemTimezone;
 
 #[ORM\Entity]
 #[ORM\HasLifecycleCallbacks]
@@ -20,6 +21,8 @@ final class Note
     protected int|null $id = null;
     #[ORM\Embedded(columnPrefix: 'created_at__')]
     protected UtcWithLocal $createdAt;
+    #[ORM\Embedded(columnPrefix: 'created_at_2__')]
+    protected UtcWithSystemTimezone $createdAt2;
     #[ORM\Embedded]
     protected UtcWithLocal|null $updatedAt = null;
 
@@ -29,6 +32,7 @@ final class Note
         protected string $content,
     ) {
         $this->createdAt = new UtcWithLocal($createdAt);
+        $this->createdAt2 = new UtcWithSystemTimezone($createdAt);
     }
 
     /**

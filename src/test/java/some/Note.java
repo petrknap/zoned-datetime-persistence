@@ -1,6 +1,7 @@
 package some;
 
 import io.github.petrknap.persistence.zoneddatetime.UtcWithLocal;
+import io.github.petrknap.persistence.zoneddatetime.UtcWithSystemTimezone;
 import jakarta.persistence.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -21,6 +22,11 @@ final public class Note {
     })
     private @NotNull UtcWithLocal createdAt;
     @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "utc", column = @Column(name = "created_at_2__utc"))
+    })
+    private @NotNull UtcWithSystemTimezone createdAt2;
+    @Embedded
     private @Nullable UtcWithLocal updatedAt;
     @Column(nullable = false)
     private @NotNull String content;
@@ -30,6 +36,7 @@ final public class Note {
             @NotNull String content
     ) {
         this.createdAt = new UtcWithLocal(createdAt);
+        this.createdAt2 = new UtcWithSystemTimezone(createdAt);
         this.content = content;
     }
 
