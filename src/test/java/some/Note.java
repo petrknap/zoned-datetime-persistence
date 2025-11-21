@@ -11,7 +11,8 @@ import java.time.ZonedDateTime;
 
 @Entity
 @Table(name = "notes")
-final public class Note {
+final public class Note
+{
     @Id
     @Column
     @GeneratedValue(strategy = GenerationType.IDENTITY)

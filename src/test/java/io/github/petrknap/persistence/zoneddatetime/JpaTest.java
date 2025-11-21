@@ -42,20 +42,20 @@ final class JpaTest extends TestCase {
                 () -> assertEquals(
                         zonedDateTime,
                         createdNote.zonedCreatedAt,
-                        "Incorrect createdNote.zonedCreatedAt"
+                        "Incorrect createdNote.zonedCreatedAt()"
                 ),
                 () -> assertNull(
                         createdNote.zonedUpdatedAt,
-                        "Incorrect createdNote.zonedUpdatedAt"
+                        "Incorrect createdNote.zonedUpdatedAt()"
                 ),
                 () -> assertEquals(
                         zonedDateTime,
                         loadedNote.zonedCreatedAt,
-                        "Incorrect loadedNote.zonedCreatedAt"
+                        "Incorrect loadedNote.zonedCreatedAt()"
                 ),
                 () -> assertNull(
                         loadedNote.zonedUpdatedAt,
-                        "Incorrect loadedNote.zonedUpdatedAt"
+                        "Incorrect loadedNote.zonedUpdatedAt()"
                 )
         );
     }
