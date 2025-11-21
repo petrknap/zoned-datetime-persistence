@@ -12,13 +12,24 @@ This package addresses the issue by providing tools that treat zoned date-time a
 
 
 
-## UTC with local date-times
+## Embeddables
 
-The **most effective** approach is to store the UTC date-time together with its local counterpart.
+- [UTC with local date-time](#utc-with-local-date-time)
+  - [How to use it](#how-to-use-it)
+- [UTC with system timezone](#utc-with-system-timezone)
+  - [Zoned date-time converter <sup><small>JPA specific</small></sup>](#zoned-date-time-converter-supsmalljpasmallsup)
+  - [UTC date-time type <sup><small>Doctrine specific</small></sup>](#utc-date-time-type-supsmalldoctrinesmallsup)
+
+
+### UTC with local date-time
+
+> `UtcWithLocal`
+
+The **most useful** approach is to store the **UTC date-time together with its local counterpart**.
 This dual representation enables **seamless manipulation** of date-time values directly **within storage system**.
 The local date-time is ideal for grouping and filtering based on user or business context, while the UTC value ensures consistent and accurate sorting across timezones.
 
-### How to use it
+#### How to use it
 
 There is built-in support for
 the **Jakarta Persistence API** ([see `Note.java`](./src/test/java/some/Note.java)),
@@ -65,6 +76,36 @@ foreach($notes as $note) {
     echo $note->getCreatedAt()->format('Y-m-d H:i T') . ': '. $note->getContent() . PHP_EOL;
 }
 ```
+
+
+### UTC with system timezone
+
+> `UtcWithSystemTimezone`
+
+The **most compact** approach is to store **only the UTC date-time**.
+This serves as an alternative to MySQL's `TIMESTAMP`, Postgres's `TIMESTAMP WITH TIMEZONE`, or custom ORM types - but **without their limitations**.
+It offers full range of `DateTime`, avoids magic TZ normalization on connection, adds `.utc` into your queries for better readability and didn't need special configuration.
+
+#### Zoned date-time converter <sup><small>JPA</small></sup>
+
+> `ZonedDateTimeConverter`
+
+A reliable alternative to [`UtcWithSystemTimezone`](#utc-with-system-timezone).
+It seamlessly handles conversions, including JPQL parameters, so you don't need to worry about manual adjustments.
+
+For more details, simply check [the attributes `Note.zonedCreatedAt` and `Note.zonedUpdatedAt`](./src/test/java/some/Note.java).
+
+#### UTC date-time type <sup><small>Doctrine</small></sup>
+
+> `UtcDateTimeType`
+
+A type designed for storing zoned date-time in UTC.
+Unlike [`ZonedDateTimeConverter`](#zoned-date-time-converter-supsmalljpasmallsup), it does **not** convert the timezone of DQL arguments.
+You need to **handle those explicitly in your queries**.
+To maintain consistency wth DQL, this type always **returns date-time with zero offset**.
+
+For more details, simply check [the attributes `Note.utcCreatedAt` and `Note.utcUpdatedAt`](./src/test/php/Some/Note.php).
+
 
 ---
 
