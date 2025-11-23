@@ -18,29 +18,6 @@ public final class UtcWithLocal extends Utc<UtcWithLocal>
     @Column(nullable = true)
     private @Nullable LocalDateTime local;
 
-    public static @Nullable UtcWithLocal ofValues(
-            @Nullable CharSequence utcDateTime,
-            @Nullable CharSequence localDateTime,
-            @NotNull String dateTimeFormat
-    ) {
-        return ofValues(
-                utcDateTime != null ? DateTimeUtils.parseAsLocalDateTime(utcDateTime, dateTimeFormat) : null,
-                localDateTime != null ? DateTimeUtils.parseAsLocalDateTime(localDateTime, dateTimeFormat) : null
-        );
-    }
-
-    public static @Nullable UtcWithLocal ofValues(
-            @Nullable LocalDateTime utcDateTime,
-            @Nullable LocalDateTime localDateTime
-    ) {
-        ZonedDateTime zonedDateTime = ZonedDateTimePersistence.computeZonedDateTime(
-                utcDateTime,
-                localDateTime
-        );
-
-        return zonedDateTime != null ? new UtcWithLocal(zonedDateTime) : null;
-    }
-
     public UtcWithLocal(@NotNull ZonedDateTime zonedDateTime)
     {
         super(zonedDateTime);
@@ -50,6 +27,29 @@ public final class UtcWithLocal extends Utc<UtcWithLocal>
     private UtcWithLocal()
     {
         super();
+    }
+
+    public static @Nullable UtcWithLocal fromPersisted(
+            @Nullable CharSequence utcDateTime,
+            @Nullable CharSequence localDateTime,
+            @NotNull String dateTimeFormat
+    ) {
+        return fromPersisted(
+                utcDateTime != null ? DateTimeUtils.parseAsLocalDateTime(utcDateTime, dateTimeFormat) : null,
+                localDateTime != null ? DateTimeUtils.parseAsLocalDateTime(localDateTime, dateTimeFormat) : null
+        );
+    }
+
+    public static @Nullable UtcWithLocal fromPersisted(
+            @Nullable LocalDateTime utcDateTime,
+            @Nullable LocalDateTime localDateTime
+    ) {
+        ZonedDateTime zonedDateTime = ZonedDateTimePersistence.computeZonedDateTime(
+                utcDateTime,
+                localDateTime
+        );
+
+        return zonedDateTime != null ? new UtcWithLocal(zonedDateTime) : null;
     }
 
     public @NotNull LocalDateTime getLocalDateTime()

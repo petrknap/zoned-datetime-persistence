@@ -18,29 +18,6 @@ public final class UtcWithTimezone extends Utc<UtcWithTimezone>
     @Column(length = 64, nullable = true)
     private @Nullable String timezone;
 
-    public static @Nullable UtcWithTimezone ofValues(
-            @Nullable CharSequence utcDateTime,
-            @Nullable String timezone,
-            @NotNull String dateTimeFormat
-            ) {
-        return ofValues(
-                utcDateTime != null ? DateTimeUtils.parseAsLocalDateTime(utcDateTime, dateTimeFormat) : null,
-                timezone
-        );
-    }
-
-    public static @Nullable UtcWithTimezone ofValues(
-            @Nullable LocalDateTime utcDateTime,
-            @Nullable String timezone
-    ) {
-        ZonedDateTime zonedDateTime = ZonedDateTimePersistence.computeZonedDateTime(
-                utcDateTime,
-                timezone != null ? ZoneId.of(timezone) : null
-        );
-
-        return zonedDateTime != null ? new UtcWithTimezone(zonedDateTime) : null;
-    }
-
     public UtcWithTimezone(@NotNull ZonedDateTime zonedDateTime)
     {
         super(zonedDateTime);
@@ -50,6 +27,39 @@ public final class UtcWithTimezone extends Utc<UtcWithTimezone>
     private UtcWithTimezone()
     {
         super();
+    }
+
+    public static @Nullable UtcWithTimezone fromPersisted(
+            @Nullable CharSequence utcDateTime,
+            @Nullable String timezone,
+            @NotNull String dateTimeFormat
+            ) {
+        return fromPersisted(
+                utcDateTime != null ? DateTimeUtils.parseAsLocalDateTime(utcDateTime, dateTimeFormat) : null,
+                timezone
+        );
+    }
+
+    public static @Nullable UtcWithTimezone fromPersisted(
+            @Nullable LocalDateTime utcDateTime,
+            @Nullable String timezone
+    ) {
+        return fromPersisted(
+                utcDateTime,
+                timezone != null ? ZoneId.of(timezone) : null
+        );
+    }
+
+    public static @Nullable UtcWithTimezone fromPersisted(
+            @Nullable LocalDateTime utcDateTime,
+            @Nullable ZoneId timezone
+    ) {
+        ZonedDateTime zonedDateTime = ZonedDateTimePersistence.computeZonedDateTime(
+                utcDateTime,
+                timezone
+        );
+
+        return zonedDateTime != null ? new UtcWithTimezone(zonedDateTime) : null;
     }
 
     public @NotNull ZoneId getTimezone()

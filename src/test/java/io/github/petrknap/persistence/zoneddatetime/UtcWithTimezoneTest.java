@@ -22,10 +22,30 @@ final class UtcWithTimezoneTest extends UtcTestCase
         );
     }
 
-    @Override @Test void ofValues_as_scalars()
+    @Override @Test void fromPersisted_objects()
     {
         assertInstance(
-                UtcWithTimezone.ofValues(
+                UtcWithTimezone.fromPersisted(
+                        utcDateTime.toLocalDateTime(),
+                        zonedDateTime.getZone().getId()
+                ),
+                utcDateTime.toLocalDateTime(),
+                zonedDateTime.getZone()
+        );
+    }
+
+    @Override @Test void fromPersisted_objects_of_null()
+    {
+        LocalDateTime utcDateTime = null;
+        ZoneId timezone = null;
+
+        assertNull(UtcWithTimezone.fromPersisted(utcDateTime, timezone));
+    }
+
+    @Override @Test void fromPersisted_scalars()
+    {
+        assertInstance(
+                UtcWithTimezone.fromPersisted(
                         localDateTimeFormatter.format(utcDateTime),
                         zonedDateTime.getZone().getId(),
                         LOCAL_DATETIME_FORMAT
@@ -35,26 +55,9 @@ final class UtcWithTimezoneTest extends UtcTestCase
         );
     }
 
-    @Override @Test void ofValues_as_scalars_of_null()
+    @Override @Test void fromPersisted_scalars_of_null()
     {
-        assertNull(UtcWithTimezone.ofValues(null, null, LOCAL_DATETIME_FORMAT));
-    }
-
-    @Override @Test void ofValues_as_embedded()
-    {
-        assertInstance(
-                UtcWithTimezone.ofValues(
-                        utcDateTime.toLocalDateTime(),
-                        zonedDateTime.getZone().getId()
-                ),
-                utcDateTime.toLocalDateTime(),
-                zonedDateTime.getZone()
-        );
-    }
-
-    @Override @Test void ofValues_as_embedded_of_null()
-    {
-        assertNull(UtcWithTimezone.ofValues(null, null));
+        assertNull(UtcWithTimezone.fromPersisted(null, null, LOCAL_DATETIME_FORMAT));
     }
 
     @Override protected @NotNull UtcWithTimezone getInstance(@NotNull ZonedDateTime zonedDateTime)

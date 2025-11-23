@@ -22,11 +22,17 @@ final class UtcWithLocal extends Utc
     #[ORM\Column(type: 'datetime_immutable', nullable: true)]
     protected readonly DateTimeImmutable|null $local;
 
+    public function __construct(DateTimeInterface $zonedDateTime)
+    {
+        parent::__construct($zonedDateTime);
+        $this->local = JavaSe8\Time::toLocalDateTime(JavaSe8\Time::zonedDateTime($zonedDateTime));
+    }
+
     /**
      * @param ($dateTimeFormat is null ? DateTimeInterface|null : string|null) $utcDateTime
      * @param ($dateTimeFormat is null ? DateTimeInterface|null  : string|null) $localDateTime
      */
-    public static function ofValues(
+    public static function fromPersisted(
         DateTimeInterface|string|null $utcDateTime,
         DateTimeInterface|string|null $localDateTime,
         string|null $dateTimeFormat = null,
@@ -42,12 +48,6 @@ final class UtcWithLocal extends Utc
         );
 
         return $zonedDateTime !== null ? new UtcWithLocal($zonedDateTime) : null;
-    }
-
-    public function __construct(DateTimeInterface $zonedDateTime)
-    {
-        parent::__construct($zonedDateTime);
-        $this->local = JavaSe8\Time::toLocalDateTime(JavaSe8\Time::zonedDateTime($zonedDateTime));
     }
 
     /**

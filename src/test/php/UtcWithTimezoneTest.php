@@ -21,10 +21,27 @@ final class UtcWithTimezoneTest extends UtcTestCase
         );
     }
 
-    public function test_ofValues_as_scalars(): void
+    public function test_fromPersisted_objects(): void
     {
         self::assertInstance(
-            UtcWithTimezone::ofValues(
+            UtcWithTimezone::fromPersisted(
+                JavaSe8\Time::toLocalDateTime($this->utcDateTime),
+                $this->zonedDateTime->getTimezone()->getName(),
+            ),
+            JavaSe8\Time::toLocalDateTime($this->utcDateTime),
+            $this->zonedDateTime->getTimezone(),
+        );
+    }
+
+    public function test_fromPersisted_objects_of_null(): void
+    {
+        self::assertNull(UtcWithTimezone::fromPersisted(null, null));
+    }
+
+    public function test_fromPersisted_scalars(): void
+    {
+        self::assertInstance(
+            UtcWithTimezone::fromPersisted(
                 $this->utcDateTime->format(self::LOCAL_DATETIME_FORMAT),
                 $this->zonedDateTime->getTimezone()->getName(),
                 self::LOCAL_DATETIME_FORMAT,
@@ -34,26 +51,9 @@ final class UtcWithTimezoneTest extends UtcTestCase
         );
     }
 
-    public function test_ofValues_as_scalars_of_null(): void
+    public function test_fromPersisted_scalars_of_null(): void
     {
-        self::assertNull(UtcWithTimezone::ofValues(null, null, self::LOCAL_DATETIME_FORMAT));
-    }
-
-    public function test_ofValues_as_embedded(): void
-    {
-        self::assertInstance(
-            UtcWithTimezone::ofValues(
-                JavaSe8\Time::toLocalDateTime($this->utcDateTime),
-                $this->zonedDateTime->getTimezone()->getName(),
-            ),
-            JavaSe8\Time::toLocalDateTime($this->utcDateTime),
-            $this->zonedDateTime->getTimezone(),
-        );
-    }
-
-    public function test_ofValues_as_embedded_of_null(): void
-    {
-        self::assertNull(UtcWithTimezone::ofValues(null, null));
+        self::assertNull(UtcWithTimezone::fromPersisted(null, null, self::LOCAL_DATETIME_FORMAT));
     }
 
     protected function getInstance(DateTimeImmutable $zonedDateTime): UtcWithTimezone

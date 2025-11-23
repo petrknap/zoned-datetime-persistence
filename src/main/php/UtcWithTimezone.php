@@ -18,30 +18,34 @@ final class UtcWithTimezone extends Utc
     #[ORM\Column(length: 64, nullable: true)]
     protected string|null $timezone;
 
+    public function __construct(DateTimeInterface $zonedDateTime)
+    {
+        parent::__construct($zonedDateTime);
+        $this->timezone = $zonedDateTime->getTimezone()->getName();
+    }
+
     /**
      * @param ($dateTimeFormat is null ? DateTimeInterface|null : string|null) $utcDateTime
      */
-    public static function ofValues(
+    public static function fromPersisted(
         DateTimeInterface|string|null $utcDateTime,
-        string|null $timezone,
+        DateTimeZone|string|null $timezone,
         string|null $dateTimeFormat = null,
     ): UtcWithTimezone|null {
         if ($dateTimeFormat !== null) {
             $utcDateTime = $utcDateTime !== null ? DateTimeUtils::parseAsLocalDateTime($utcDateTime, $dateTimeFormat) : null;
         }
 
+        if (!($timezone instanceof DateTimeZone)) {
+            $timezone = $timezone !== null ? new DateTimeZone($timezone) : null;
+        }
+
         $zonedDateTime = ZonedDateTimePersistence::computeZonedDateTime(
             $utcDateTime,
-            timezone: $timezone !== null ? new DateTimeZone($timezone) : null,
+            timezone: $timezone,
         );
 
         return $zonedDateTime != null ? new UtcWithTimezone($zonedDateTime) : null;
-    }
-
-    public function __construct(DateTimeInterface $zonedDateTime)
-    {
-        parent::__construct($zonedDateTime);
-        $this->timezone = $zonedDateTime->getTimezone()->getName();
     }
 
     public function getTimezone(): DateTimeZone
