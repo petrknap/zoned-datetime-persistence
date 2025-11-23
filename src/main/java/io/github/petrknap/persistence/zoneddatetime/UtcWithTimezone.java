@@ -18,7 +18,7 @@ public final class UtcWithTimezone extends Utc<UtcWithTimezone>
     @Column(length = 64, nullable = true)
     private @Nullable String timezone;
 
-    public UtcWithTimezone(@NotNull ZonedDateTime zonedDateTime)
+    private UtcWithTimezone(@NotNull ZonedDateTime zonedDateTime)
     {
         super(zonedDateTime);
         timezone = zonedDateTime.getZone().getId();
@@ -27,6 +27,11 @@ public final class UtcWithTimezone extends Utc<UtcWithTimezone>
     private UtcWithTimezone()
     {
         super();
+    }
+
+    public static @NotNull UtcWithTimezone of(ZonedDateTime zonedDateTime)
+    {
+        return new UtcWithTimezone(zonedDateTime);
     }
 
     public static @Nullable UtcWithTimezone fromStored(

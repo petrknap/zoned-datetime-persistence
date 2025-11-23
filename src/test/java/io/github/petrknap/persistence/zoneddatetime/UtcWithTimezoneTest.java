@@ -69,7 +69,7 @@ final class UtcWithTimezoneTest extends UtcTestCase
 
     @Override protected @NotNull UtcWithTimezone getInstance(@NotNull ZonedDateTime zonedDateTime)
     {
-        return new UtcWithTimezone(zonedDateTime);
+        return UtcWithTimezone.of(zonedDateTime);
     }
 
     private static void assertInstance(

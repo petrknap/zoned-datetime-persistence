@@ -65,7 +65,7 @@ final class UtcWithLocalTest extends UtcTestCase
 
     @Override protected @NotNull UtcWithLocal getInstance(@NotNull ZonedDateTime zonedDateTime)
     {
-        return new UtcWithLocal(zonedDateTime);
+        return UtcWithLocal.of(zonedDateTime);
     }
 
     private static void assertInstance(

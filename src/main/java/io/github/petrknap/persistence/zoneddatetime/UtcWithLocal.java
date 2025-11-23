@@ -18,7 +18,7 @@ public final class UtcWithLocal extends Utc<UtcWithLocal>
     @Column(nullable = true)
     private @Nullable LocalDateTime local;
 
-    public UtcWithLocal(@NotNull ZonedDateTime zonedDateTime)
+    private UtcWithLocal(@NotNull ZonedDateTime zonedDateTime)
     {
         super(zonedDateTime);
         local = zonedDateTime.toLocalDateTime();
@@ -27,6 +27,11 @@ public final class UtcWithLocal extends Utc<UtcWithLocal>
     private UtcWithLocal()
     {
         super();
+    }
+
+    public static @NotNull UtcWithLocal of(@NotNull ZonedDateTime zonedDateTime)
+    {
+        return new UtcWithLocal(zonedDateTime);
     }
 
     public static @Nullable UtcWithLocal fromStored(

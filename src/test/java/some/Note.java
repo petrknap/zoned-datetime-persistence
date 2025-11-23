@@ -50,8 +50,8 @@ final public class Note
             @NotNull ZonedDateTime createdAt,
             @NotNull String content
     ) {
-        this.createdAt = new UtcWithLocal(createdAt);
-        this.createdAt2 = new UtcWithTimezone(createdAt);
+        this.createdAt = UtcWithLocal.of(createdAt);
+        this.createdAt2 = UtcWithTimezone.of(createdAt);
         this.content = content;
     }
 
@@ -75,6 +75,6 @@ final public class Note
 
     public void setContent(@NotNull String content) {
         this.content = content;
-        updatedAt = new UtcWithLocal(ZonedDateTime.now());
+        updatedAt = UtcWithLocal.of(ZonedDateTime.now());
     }
 }

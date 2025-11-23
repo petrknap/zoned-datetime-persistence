@@ -10,6 +10,9 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 
 abstract class UtcTestCase extends TestCase
 {
+    /**
+     * @implNote tests output of `getInstance`
+     */
     abstract @Test void constructs_itself();
 
     /**
