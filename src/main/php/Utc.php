@@ -24,9 +24,8 @@ abstract class Utc
     #[ORM\Column(type: 'datetime_immutable', nullable: true)]
     protected readonly DateTimeImmutable|null $utc;
 
-    protected function __construct(
-        DateTimeInterface $zonedDateTime,
-    ) {
+    protected function __construct(DateTimeInterface $zonedDateTime)
+    {
         $this->utc = ZonedDateTimePersistence::computeUtcDateTime(JavaSe8\Time::zonedDateTime($zonedDateTime));
     }
 

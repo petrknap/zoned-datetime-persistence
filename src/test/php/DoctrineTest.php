@@ -29,7 +29,7 @@ final class DoctrineTest extends TestCase
         return $entityManager;
     }
 
-    public function test_embeddable(): void
+    public function test_embeddables(): void
     {
         $entityManager = self::prepareEntityManager();
         $createdNote = new Some\Note($this->zonedDateTime, 'test');
@@ -41,29 +41,41 @@ final class DoctrineTest extends TestCase
                 'SELECT note FROM ' . Some\Note::class . ' note' .
                     " WHERE note.content = 'test'" .
                     ' AND note.createdAt.utc = :utc AND note.createdAt.local = :local' .
+                    ' AND note.createdAt2.utc = :utc AND note.createdAt2.timezone = :timezone' .
                     ' AND note.updatedAt.utc IS NULL',
             )
             ->setParameter('utc', JavaSe8\Time::toLocalDateTime($this->utcDateTime))
             ->setParameter('local', $this->localDateTime)
+            ->setParameter('timezone', $this->zonedDateTime->getTimezone()->getName())
             ->getSingleResult();
 
         self::assertDateTimeEquals(
             $this->zonedDateTime,
             $createdNote->getCreatedAt(),
-            'Incorrect createdNote.createdAt',
+            'Unexpected createdNote.getCreatedAt()',
         );
         self::assertNull(
             $createdNote->getUpdatedAt(),
-            'Incorrect createdNote.updatedAt',
+            'Unexpected createdNote.getUpdatedAt()',
         );
         self::assertDateTimeEquals(
             $this->zonedDateTime,
             $loadedNote->getCreatedAt(),
-            'Incorrect loadedNote.createdAt',
+            'Unexpected loadedNote.getCreatedAt()',
         );
         self::assertNull(
             $loadedNote->getUpdatedAt(),
-            'Incorrect loadedNote.updatedAt',
+            'Unexpected loadedNote.getUpdatedAt()',
+        );
+    }
+
+    public function test_Doctrine_ORM_can_be_optional_requirement(): void
+    {
+        self::assertNotNull(
+            new #[NonExistend\ORM\Embeddable] class () { // @phpstan-ignore-line
+                #[NonExistend\ORM\Column(nullable: true)] // @phpstan-ignore-line
+                public int $id = 0;
+            },
         );
     }
 }

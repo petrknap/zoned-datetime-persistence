@@ -5,78 +5,78 @@ declare(strict_types=1);
 namespace PetrKnap\ZonedDateTimePersistence;
 
 use DateTimeImmutable;
+use DateTimeZone;
 
 /**
  * @phpstan-import-type LocalDateTime from JavaSe8\Time
  */
-final class UtcWithLocalTest extends UtcTestCase
+final class UtcWithTimezoneTest extends UtcTestCase
 {
     public function test_constructs_itself(): void
     {
         self::assertInstance(
             $this->getInstance($this->zonedDateTime),
             JavaSe8\Time::toLocalDateTime($this->utcDateTime),
-            $this->localDateTime,
+            $this->zonedDateTime->getTimezone(),
         );
     }
 
     public function test_fromStored_objects(): void
     {
         self::assertInstance(
-            UtcWithLocal::fromStored(
+            UtcWithTimezone::fromStored(
                 JavaSe8\Time::toLocalDateTime($this->utcDateTime),
-                $this->localDateTime,
+                $this->zonedDateTime->getTimezone(),
             ),
             JavaSe8\Time::toLocalDateTime($this->utcDateTime),
-            $this->localDateTime,
+            $this->zonedDateTime->getTimezone(),
         );
     }
 
     public function test_fromStored_objects_of_null(): void
     {
-        self::assertNull(UtcWithLocal::fromStored(null, null));
+        self::assertNull(UtcWithTimezone::fromStored(null, null));
     }
 
     public function test_fromStored_scalars(): void
     {
         self::assertInstance(
-            UtcWithLocal::fromStored(
+            UtcWithTimezone::fromStored(
                 $this->utcDateTime->format(self::LOCAL_DATETIME_FORMAT),
-                self::LOCAL_DATETIME,
+                $this->zonedDateTime->getTimezone()->getName(),
                 self::LOCAL_DATETIME_FORMAT,
             ),
             JavaSe8\Time::toLocalDateTime($this->utcDateTime),
-            $this->localDateTime,
+            $this->zonedDateTime->getTimezone(),
         );
     }
 
     public function test_fromStored_scalars_of_null(): void
     {
-        self::assertNull(UtcWithLocal::fromStored(null, null, self::LOCAL_DATETIME_FORMAT));
+        self::assertNull(UtcWithTimezone::fromStored(null, null, self::LOCAL_DATETIME_FORMAT));
     }
 
-    public function test_getLocalDateTime_as_formatted_string(): void
+    public function test_getTimezone_as_formatted_string(): void
     {
         self::assertEquals(
-            $this->localDateTime->format(self::LOCAL_DATETIME_FORMAT),
-            $this->getInstance($this->zonedDateTime)->getLocalDateTime(self::LOCAL_DATETIME_FORMAT),
+            $this->zonedDateTime->getTimezone()->getName(),
+            $this->getInstance($this->zonedDateTime)->getTimezone(true),
         );
     }
 
-    protected function getInstance(DateTimeImmutable $zonedDateTime): UtcWithLocal
+    protected function getInstance(DateTimeImmutable $zonedDateTime): UtcWithTimezone
     {
-        return new UtcWithLocal($zonedDateTime);
+        return new UtcWithTimezone($zonedDateTime);
     }
 
     /**
      * @param LocalDateTime $expectedUtcDateTime
-     * @param LocalDateTime $expectedLocalDateTime
      */
     private static function assertInstance(
-        UtcWithLocal|null $actual,
+        UtcWithTimezone|null $actual,
         DateTimeImmutable $expectedUtcDateTime,
-        DateTimeImmutable $expectedLocalDateTime,
-    ): void {
+        DateTimeZone $expectedTimezone,
+    ) {
         self::assertNotNull($actual);
         self::assertEquals(
             $expectedUtcDateTime,
@@ -84,9 +84,9 @@ final class UtcWithLocalTest extends UtcTestCase
             'Unexpected UTC date-time'
         );
         self::assertEquals(
-            $expectedLocalDateTime,
-            $actual->getLocalDateTime(),
-            'Unexpected local date-time'
+            $expectedTimezone,
+            $actual->getTimezone(),
+            'Unexpected timezone'
         );
     }
 }
