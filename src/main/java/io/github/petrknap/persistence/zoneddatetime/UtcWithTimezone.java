@@ -5,6 +5,7 @@ import jakarta.persistence.Embeddable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.time.Clock;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -27,6 +28,11 @@ public final class UtcWithTimezone extends Utc<UtcWithTimezone>
     private UtcWithTimezone()
     {
         super();
+    }
+
+    public static @NotNull UtcWithTimezone now(Clock clock)
+    {
+        return new UtcWithTimezone(ZonedDateTime.now(clock));
     }
 
     public static @Nullable UtcWithTimezone fromStored(

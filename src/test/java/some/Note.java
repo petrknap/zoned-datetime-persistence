@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.time.Clock;
 import java.time.ZonedDateTime;
 
 @Entity
@@ -75,6 +76,6 @@ final public class Note
 
     public void setContent(@NotNull String content) {
         this.content = content;
-        updatedAt = new UtcWithLocal(ZonedDateTime.now());
+        updatedAt = UtcWithLocal.now(null);
     }
 }

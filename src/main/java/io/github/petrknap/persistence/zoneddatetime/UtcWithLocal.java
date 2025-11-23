@@ -5,6 +5,7 @@ import jakarta.persistence.Embeddable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.time.Clock;
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -27,6 +28,13 @@ public final class UtcWithLocal extends Utc<UtcWithLocal>
     private UtcWithLocal()
     {
         super();
+    }
+
+    public static @NotNull UtcWithLocal now(@Nullable Clock clock)
+    {
+        clock = clock != null ? clock : Clock.systemDefaultZone();
+
+        return new UtcWithLocal(ZonedDateTime.now(clock));
     }
 
     public static @Nullable UtcWithLocal fromStored(

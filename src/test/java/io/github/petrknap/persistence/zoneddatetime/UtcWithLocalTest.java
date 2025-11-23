@@ -4,6 +4,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.Test;
 
+import java.time.Clock;
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 
@@ -15,6 +16,15 @@ final class UtcWithLocalTest extends UtcTestCase
     {
         assertInstance(
                 getInstance(zonedDateTime),
+                utcDateTime.toLocalDateTime(),
+                localDateTime
+        );
+    }
+
+    @Override @Test void now()
+    {
+        assertInstance(
+                UtcWithLocal.now(Clock.fixed(zonedDateTime.toInstant(), zonedDateTime.getZone())),
                 utcDateTime.toLocalDateTime(),
                 localDateTime
         );
