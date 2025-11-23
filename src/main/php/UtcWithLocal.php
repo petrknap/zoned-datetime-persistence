@@ -28,20 +28,21 @@ final class UtcWithLocal extends Utc
         $this->local = JavaSe8\Time::toLocalDateTime(JavaSe8\Time::zonedDateTime($zonedDateTime));
     }
 
-    /**
-     * @param ($dateTimeFormat is null ? DateTimeInterface|null : string|null) $utcDateTime
-     * @param ($dateTimeFormat is null ? DateTimeInterface|null  : string|null) $localDateTime
-     */
-    public static function fromStored(
-        DateTimeInterface|string|null $utcDateTime,
-        DateTimeInterface|string|null $localDateTime,
-        string|null $dateTimeFormat = null,
+    public static function fromFormattedValues(
+        string|null $utcDateTime,
+        string|null $localDateTime,
+        string $dateTimeFormat,
     ): UtcWithLocal|null {
-        if ($dateTimeFormat !== null) {
-            $utcDateTime = $utcDateTime !== null ? DateTimeUtils::parseAsLocalDateTime($utcDateTime, $dateTimeFormat) : null;
-            $localDateTime = $localDateTime !== null ? DateTimeUtils::parseAsLocalDateTime($localDateTime, $dateTimeFormat) : null;
-        }
+        return self::fromValues(
+            $utcDateTime !== null ? DateTimeUtils::parseAsLocalDateTime($utcDateTime, $dateTimeFormat) : null,
+            $localDateTime !== null ? DateTimeUtils::parseAsLocalDateTime($localDateTime, $dateTimeFormat) : null,
+        );
+    }
 
+    public static function fromValues(
+        DateTimeInterface|null $utcDateTime,
+        DateTimeInterface|null $localDateTime,
+    ): UtcWithLocal|null {
         $zonedDateTime = ZonedDateTimePersistence::computeZonedDateTime(
             $utcDateTime,
             localDateTime: $localDateTime,
