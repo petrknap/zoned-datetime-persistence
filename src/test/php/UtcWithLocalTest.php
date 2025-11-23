@@ -20,10 +20,10 @@ final class UtcWithLocalTest extends UtcTestCase
         );
     }
 
-    public function test_fromPersisted_objects(): void
+    public function test_fromStored_objects(): void
     {
         self::assertInstance(
-            UtcWithLocal::fromPersisted(
+            UtcWithLocal::fromStored(
                 JavaSe8\Time::toLocalDateTime($this->utcDateTime),
                 $this->localDateTime,
             ),
@@ -32,15 +32,15 @@ final class UtcWithLocalTest extends UtcTestCase
         );
     }
 
-    public function test_fromPersisted_objects_of_null(): void
+    public function test_fromStored_objects_of_null(): void
     {
-        self::assertNull(UtcWithLocal::fromPersisted(null, null));
+        self::assertNull(UtcWithLocal::fromStored(null, null));
     }
 
-    public function test_fromPersisted_scalars(): void
+    public function test_fromStored_scalars(): void
     {
         self::assertInstance(
-            UtcWithLocal::fromPersisted(
+            UtcWithLocal::fromStored(
                 $this->utcDateTime->format(self::LOCAL_DATETIME_FORMAT),
                 self::LOCAL_DATETIME,
                 self::LOCAL_DATETIME_FORMAT,
@@ -50,9 +50,9 @@ final class UtcWithLocalTest extends UtcTestCase
         );
     }
 
-    public function test_fromPersisted_scalars_of_null(): void
+    public function test_fromStored_scalars_of_null(): void
     {
-        self::assertNull(UtcWithLocal::fromPersisted(null, null, self::LOCAL_DATETIME_FORMAT));
+        self::assertNull(UtcWithLocal::fromStored(null, null, self::LOCAL_DATETIME_FORMAT));
     }
 
     public function test_getLocalDateTime_as_formatted_string(): void

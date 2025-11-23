@@ -32,7 +32,7 @@ final class UtcWithLocal extends Utc
      * @param ($dateTimeFormat is null ? DateTimeInterface|null : string|null) $utcDateTime
      * @param ($dateTimeFormat is null ? DateTimeInterface|null  : string|null) $localDateTime
      */
-    public static function fromPersisted(
+    public static function fromStored(
         DateTimeInterface|string|null $utcDateTime,
         DateTimeInterface|string|null $localDateTime,
         string|null $dateTimeFormat = null,

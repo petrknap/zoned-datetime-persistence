@@ -29,28 +29,28 @@ public final class UtcWithTimezone extends Utc<UtcWithTimezone>
         super();
     }
 
-    public static @Nullable UtcWithTimezone fromPersisted(
+    public static @Nullable UtcWithTimezone fromStored(
             @Nullable CharSequence utcDateTime,
             @Nullable String timezone,
             @NotNull String dateTimeFormat
-            ) {
-        return fromPersisted(
+    ) {
+        return fromStored(
                 utcDateTime != null ? DateTimeUtils.parseAsLocalDateTime(utcDateTime, dateTimeFormat) : null,
                 timezone
         );
     }
 
-    public static @Nullable UtcWithTimezone fromPersisted(
+    public static @Nullable UtcWithTimezone fromStored(
             @Nullable LocalDateTime utcDateTime,
             @Nullable String timezone
     ) {
-        return fromPersisted(
+        return fromStored(
                 utcDateTime,
                 timezone != null ? ZoneId.of(timezone) : null
         );
     }
 
-    public static @Nullable UtcWithTimezone fromPersisted(
+    public static @Nullable UtcWithTimezone fromStored(
             @Nullable LocalDateTime utcDateTime,
             @Nullable ZoneId timezone
     ) {

@@ -27,7 +27,7 @@ final class UtcWithTimezone extends Utc
     /**
      * @param ($dateTimeFormat is null ? DateTimeInterface|null : string|null) $utcDateTime
      */
-    public static function fromPersisted(
+    public static function fromStored(
         DateTimeInterface|string|null $utcDateTime,
         DateTimeZone|string|null $timezone,
         string|null $dateTimeFormat = null,

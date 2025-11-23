@@ -22,10 +22,10 @@ final class UtcWithTimezoneTest extends UtcTestCase
         );
     }
 
-    @Override @Test void fromPersisted_objects()
+    @Override @Test void fromStored_objects()
     {
         assertInstance(
-                UtcWithTimezone.fromPersisted(
+                UtcWithTimezone.fromStored(
                         utcDateTime.toLocalDateTime(),
                         zonedDateTime.getZone().getId()
                 ),
@@ -34,18 +34,18 @@ final class UtcWithTimezoneTest extends UtcTestCase
         );
     }
 
-    @Override @Test void fromPersisted_objects_of_null()
+    @Override @Test void fromStored_objects_of_null()
     {
         LocalDateTime utcDateTime = null;
         ZoneId timezone = null;
 
-        assertNull(UtcWithTimezone.fromPersisted(utcDateTime, timezone));
+        assertNull(UtcWithTimezone.fromStored(utcDateTime, timezone));
     }
 
-    @Override @Test void fromPersisted_scalars()
+    @Override @Test void fromStored_scalars()
     {
         assertInstance(
-                UtcWithTimezone.fromPersisted(
+                UtcWithTimezone.fromStored(
                         localDateTimeFormatter.format(utcDateTime),
                         zonedDateTime.getZone().getId(),
                         LOCAL_DATETIME_FORMAT
@@ -55,9 +55,9 @@ final class UtcWithTimezoneTest extends UtcTestCase
         );
     }
 
-    @Override @Test void fromPersisted_scalars_of_null()
+    @Override @Test void fromStored_scalars_of_null()
     {
-        assertNull(UtcWithTimezone.fromPersisted(null, null, LOCAL_DATETIME_FORMAT));
+        assertNull(UtcWithTimezone.fromStored(null, null, LOCAL_DATETIME_FORMAT));
     }
 
     @Override protected @NotNull UtcWithTimezone getInstance(@NotNull ZonedDateTime zonedDateTime)

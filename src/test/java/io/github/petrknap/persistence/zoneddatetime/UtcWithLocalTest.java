@@ -20,10 +20,10 @@ final class UtcWithLocalTest extends UtcTestCase
         );
     }
 
-    @Override @Test void fromPersisted_objects()
+    @Override @Test void fromStored_objects()
     {
         assertInstance(
-                UtcWithLocal.fromPersisted(
+                UtcWithLocal.fromStored(
                         utcDateTime.toLocalDateTime(),
                         localDateTime
                 ),
@@ -32,15 +32,15 @@ final class UtcWithLocalTest extends UtcTestCase
         );
     }
 
-    @Override @Test void fromPersisted_objects_of_null()
+    @Override @Test void fromStored_objects_of_null()
     {
-        assertNull(UtcWithLocal.fromPersisted(null, null));
+        assertNull(UtcWithLocal.fromStored(null, null));
     }
 
-    @Override @Test void fromPersisted_scalars()
+    @Override @Test void fromStored_scalars()
     {
         assertInstance(
-                UtcWithLocal.fromPersisted(
+                UtcWithLocal.fromStored(
                         localDateTimeFormatter.format(utcDateTime),
                         LOCAL_DATETIME,
                         LOCAL_DATETIME_FORMAT
@@ -50,9 +50,9 @@ final class UtcWithLocalTest extends UtcTestCase
         );
     }
 
-    @Override @Test void fromPersisted_scalars_of_null()
+    @Override @Test void fromStored_scalars_of_null()
     {
-        assertNull(UtcWithLocal.fromPersisted(null, null, LOCAL_DATETIME_FORMAT));
+        assertNull(UtcWithLocal.fromStored(null, null, LOCAL_DATETIME_FORMAT));
     }
 
     @Test void getLocalDateTime_as_formatted_string()
