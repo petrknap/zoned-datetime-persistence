@@ -12,6 +12,8 @@ abstract class UtcTestCase extends TestCase
 {
     abstract @Test void constructs_itself();
 
+    abstract @Test void now();
+
     /**
      * @implNote use arguments typed AS IS in embeddable
      */
