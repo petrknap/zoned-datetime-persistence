@@ -1,7 +1,8 @@
 # Timezone aware date-time persistence
 
-[![JitPack](https://jitpack.io/v/io.github.petrknap/zoned-datetime-persistence.svg?style=flat)](https://jitpack.io/#io.github.petrknap/zoned-datetime-persistence)
-[![Packagist](https://img.shields.io/packagist/v/petrknap/zoned-datetime-persistence?style=flat)](https://packagist.org/packages/petrknap/zoned-datetime-persistence)
+[![GitHub](https://img.shields.io/github/v/release/petrknap/zoned-datetime-persistence?include_prereleases&label=GitHub&style=flat)](https://github.com/petrknap/zoned-datetime-persistence/releases)
+[![JitPack](https://img.shields.io/jitpack/version/io.github.petrknap/zoned-datetime-persistence?label=JitPack&style=flat)](https://jitpack.io/#io.github.petrknap/zoned-datetime-persistence)
+[![Packagist](https://img.shields.io/packagist/v/petrknap/zoned-datetime-persistence?label=Packagist&style=flat)](https://packagist.org/packages/petrknap/zoned-datetime-persistence)
 
 Many data storage systems (like MySQL) do not natively support storing timezone information alongside date-time values.
 This limitation introduces ambiguity when handling zoned date-times — particularly in applications operating across multiple timezones or even within a single timezone that observes multiple offsets (e.g. due to daylight saving time).
