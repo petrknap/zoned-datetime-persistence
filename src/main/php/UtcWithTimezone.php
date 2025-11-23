@@ -24,22 +24,21 @@ final class UtcWithTimezone extends Utc
         $this->timezone = $zonedDateTime->getTimezone()->getName();
     }
 
-    /**
-     * @param ($dateTimeFormat is null ? DateTimeInterface|null : string|null) $utcDateTime
-     */
-    public static function fromStored(
-        DateTimeInterface|string|null $utcDateTime,
-        DateTimeZone|string|null $timezone,
-        string|null $dateTimeFormat = null,
+    public static function fromFormattedValues(
+        string|null $utcDateTime,
+        string $dateTimeFormat,
+        string|null $timezone,
     ): UtcWithTimezone|null {
-        if ($dateTimeFormat !== null) {
-            $utcDateTime = $utcDateTime !== null ? DateTimeUtils::parseAsLocalDateTime($utcDateTime, $dateTimeFormat) : null;
-        }
+        return self::fromValues(
+            $utcDateTime !== null ? DateTimeUtils::parseAsLocalDateTime($utcDateTime, $dateTimeFormat) : null,
+            $timezone !== null ? new DateTimeZone($timezone) : null,
+        );
+    }
 
-        if (!($timezone instanceof DateTimeZone)) {
-            $timezone = $timezone !== null ? new DateTimeZone($timezone) : null;
-        }
-
+    public static function fromValues(
+        DateTimeInterface|null $utcDateTime,
+        DateTimeZone|null $timezone,
+    ): UtcWithTimezone|null {
         $zonedDateTime = ZonedDateTimePersistence::computeZonedDateTime(
             $utcDateTime,
             timezone: $timezone,

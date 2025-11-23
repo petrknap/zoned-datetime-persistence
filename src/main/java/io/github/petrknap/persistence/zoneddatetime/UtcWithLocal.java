@@ -29,18 +29,18 @@ public final class UtcWithLocal extends Utc<UtcWithLocal>
         super();
     }
 
-    public static @Nullable UtcWithLocal fromStored(
+    public static @Nullable UtcWithLocal fromFormattedValues(
             @Nullable CharSequence utcDateTime,
             @Nullable CharSequence localDateTime,
             @NotNull String dateTimeFormat
     ) {
-        return fromStored(
+        return fromValues(
                 utcDateTime != null ? DateTimeUtils.parseAsLocalDateTime(utcDateTime, dateTimeFormat) : null,
                 localDateTime != null ? DateTimeUtils.parseAsLocalDateTime(localDateTime, dateTimeFormat) : null
         );
     }
 
-    public static @Nullable UtcWithLocal fromStored(
+    public static @Nullable UtcWithLocal fromValues(
             @Nullable LocalDateTime utcDateTime,
             @Nullable LocalDateTime localDateTime
     ) {

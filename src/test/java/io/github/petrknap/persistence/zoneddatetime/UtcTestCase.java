@@ -12,19 +12,13 @@ abstract class UtcTestCase extends TestCase
 {
     abstract @Test void constructs_itself();
 
-    /**
-     * @implNote use arguments typed AS IS in embeddable
-     */
-    abstract @Test void fromStored_objects();
+    abstract @Test void fromValues();
 
-    abstract @Test void fromStored_objects_of_null();
+    abstract @Test void fromValues_of_null();
 
-    /**
-     * @implNote use arguments typed as scalars
-     */
-    abstract @Test void fromStored_scalars();
+    abstract @Test void fromFormattedValues();
 
-    abstract @Test void fromStored_scalars_of_null();
+    abstract @Test void fromFormattedValues_of_null();
 
     @Test void asNullable_returns_this()
     {
