@@ -26,7 +26,7 @@ final class UtcWithTimezoneTest extends UtcTestCase
         self::assertInstance(
             UtcWithTimezone::fromStored(
                 JavaSe8\Time::toLocalDateTime($this->utcDateTime),
-                $this->zonedDateTime->getTimezone()->getName(),
+                $this->zonedDateTime->getTimezone(),
             ),
             JavaSe8\Time::toLocalDateTime($this->utcDateTime),
             $this->zonedDateTime->getTimezone(),

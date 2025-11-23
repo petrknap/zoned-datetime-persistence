@@ -34,8 +34,6 @@ final class ZonedDateTimePersistence
      * @param null $_ named arguments separator
      *
      * @return ($utcDateTime is null ? null : ZonedDateTime)
-     *
-     * @throws Exception\ZonedDateTimePersistenceCouldNotComputeZonedDateTime
      */
     public static function computeZonedDateTime(
         DateTimeInterface|null $utcDateTime,

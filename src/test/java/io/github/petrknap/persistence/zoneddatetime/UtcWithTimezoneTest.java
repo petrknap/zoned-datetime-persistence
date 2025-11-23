@@ -27,7 +27,7 @@ final class UtcWithTimezoneTest extends UtcTestCase
         assertInstance(
                 UtcWithTimezone.fromStored(
                         utcDateTime.toLocalDateTime(),
-                        zonedDateTime.getZone().getId()
+                        zonedDateTime.getZone()
                 ),
                 utcDateTime.toLocalDateTime(),
                 zonedDateTime.getZone()
