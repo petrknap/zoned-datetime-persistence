@@ -14,7 +14,8 @@
     "sort-packages": true
   },
   "conflict": {
-    "doctrine/orm": "<3|>=4"
+    "doctrine/orm": "<3|>=4",
+    "illuminate/database": "<12|>=13"
   },
   "description": "Timezone aware date-time persistence",
   "funding": [
@@ -28,6 +29,9 @@
     "DQL",
     "DateTime",
     "Doctrine",
+    "Eloquent",
+    "Laravel",
+    "ORM",
     "SQL",
     "Timezone",
     "ZonedDateTime",
@@ -40,10 +44,11 @@
   "license": "LGPL-3.0-or-later",
   "name": "petrknap/zoned-datetime-persistence",
   "require": {
-    "php": ">=8.1"
+    "php": ">=8.2"
   },
   "require-dev": {
-    "doctrine/orm": "^3.0",
+    "doctrine/orm": "*",
+    "illuminate/database": "*",
     "nunomaduro/phpinsights": "^2.11",
     "petrknap/shorts": "^3.0",
     "phpstan/phpstan": "^1.12",

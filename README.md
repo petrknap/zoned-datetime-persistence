@@ -18,7 +18,7 @@ This package addresses the issue by providing tools that treat zoned date-time a
 - [UTC with local date-time](#utc-with-local-date-time)
   - [How to use it](#how-to-use-it)
 - [UTC with timezone](#utc-with-timezone)
-- [UTC date-time converter / type](#utc-date-time-converter--type)
+- [UTC date-time converter / type / cast](#utc-date-time-converter--type--cast)
 
 
 ### UTC with local date-time
@@ -32,8 +32,9 @@ The local date-time is ideal for grouping and filtering based on user or busines
 #### How to use it
 
 There is built-in support for
-the **Jakarta Persistence API** ([see `Note.java`](./src/test/java/some/Note.java)),
-the **Doctrine ORM** ([see `Note.php`](./src/test/php/Some/Note.php)),
+the **Jakarta Persistence API** (see [`Note.java`](./src/test/java/some/Note.java) and [`JpaTest.java`](./src/test/java/io/github/petrknap/persistence/zoneddatetime/JpaTest.java)),
+the **Doctrine ORM** (see [`Note.php`](./src/test/php/Some/Note.php) and [`DoctrineTest.php`](./src/test/php/DoctrineTest.php)),
+the **Eloquent** (see [`NoteModel.php`](./src/test/php/Some/NoteModel.php) and [`EloquentTest.php`](./src/test/php/EloquentTest.php)),
 and, of course, it **can be integrated manually** into any project, giving you full flexibility to adapt it to your specific needs.
 
 ```php
@@ -43,13 +44,13 @@ $em = DoctrineTest::prepareEntityManager();
 
 # persist entity
 $em->persist(new Some\Note(
-    createdAt: new \DateTime('2025-10-30 23:52'),
-    content: 'Doctrine is supported',
+    createdAt: new \DateTimeImmutable('2025-10-30 23:52'),
+    content: "It's dark outside...",
 ));
 $em->flush();
 
 # insert data manually (static call)
-$now = new \DateTime('2025-10-26 02:45', new \DateTimeZone('CEST'));
+$now = new \DateTimeImmutable('2025-10-26 02:45', new \DateTimeZone('CEST'));
 $em->getConnection()->insert('notes', [
     'created_at__utc' => ZonedDateTimePersistence::computeUtcDateTime($now)->format('Y-m-d H:i:s'),
     'created_at__local' => $now->format('Y-m-d H:i:s'),
@@ -57,7 +58,7 @@ $em->getConnection()->insert('notes', [
 ]);
 
 # insert data manually (object instance)
-$now = new UtcWithLocal(new \DateTime('2025-10-26 02:15', new \DateTimeZone('CET')));
+$now = new UtcWithLocal(new \DateTimeImmutable('2025-10-26 02:15', new \DateTimeZone('CET')));
 $em->getConnection()->insert('notes', [
     'created_at__utc' => $now->getUtcDateTime('Y-m-d H:i:s'),
     'created_at__local' => $now->getLocalDateTime('Y-m-d H:i:s'),
@@ -109,19 +110,20 @@ UtcWithLocal:    2025-03-30 02:45 GMT+0100
 ```
 
 
-### UTC date-time converter / type
+### UTC date-time converter / type / cast
 
 > `UtcDateTimeConverter` <sup><small>Jakarta Persistence API</small></sup>
 
 This converter transparently manages conversions of `ZonedDateTime`, including JPQL parameters.
 That means you **no longer need to worry** about manual timezone adjustments.
 
-For examples, see [the attributes `Note.createdAtUtc` and `Note.updatedAtUtc`](./src/test/java/some/Note.java).
+For examples, see [the attributes `Note.createdAtUtc` and `Note.deletedAtUtc`](./src/test/java/some/Note.java) and [the `JpaTest`](./src/test/java/io/github/petrknap/persistence/zoneddatetime/JpaTest.java).
 
 > `UtcDateTimeType` <sup><small>Doctrine ORM</small></sup>
 
 In contrast to `UtcDateTimeConverter`, this type does **not** automatically adjust the timezone of DQL arguments.
 You must therefore **handle timezone conversions explicitly in your queries**.
+But the conversions before flush and after hydration works well.
 
 **Important:** Before using, you need to **register the type** in your Doctrine configuration.
 ```php
@@ -131,7 +133,15 @@ Doctrine\DBAL\Types\Type::addType(
 );
 ```
 
-For examples, see [the attributes `Note.createdAtUtc` and `Note.updatedAtUtc`](./src/test/php/Some/Note.php).
+For examples, see [the attributes `Note.createdAtUtc` and `Note.deletedAtUtc`](./src/test/php/Some/Note.php) and [the `DoctrineTest`](./src/test/php/DoctrineTest.php).
+
+> `AsUtcDateTime` <sup><small>Eloquent</small></sup>
+
+In contrast to `UtcDateTimeConverter` and `UtcDateTimeType`, this cast may or may **not** adjust the timezone of any Eloquent input.
+You should therefore **handle timezone conversions explicitly everytime you are providing date-time into Eloquent**.
+But the conversion after hydration works well.
+
+For examples, see [the attributes `NoteModel.created_at_utc` and `NoteModel.deleted_at_utc`](./src/test/php/Some/NoteModel.php) and [the `EloquentTest`](./src/test/php/EloquentTest.php).
 
 
 ---

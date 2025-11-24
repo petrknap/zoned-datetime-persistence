@@ -17,9 +17,11 @@ final class DoctrineTest extends TestCase
         if (!Type::hasType(UtcDateTimeType::NAME)) {
             Type::addType(UtcDateTimeType::NAME, UtcDateTimeType::class);
         }
+
         $config = ORMSetup::createAttributeMetadataConfiguration([
             __DIR__,
         ], isDevMode: true);
+
         $entityManager = new EntityManager(
             DriverManager::getConnection([
                 'driver' => 'pdo_sqlite',
@@ -27,15 +29,18 @@ final class DoctrineTest extends TestCase
             ], $config),
             $config,
         );
+
         (new SchemaTool($entityManager))->createSchema([
             $entityManager->getClassMetadata(Some\Note::class),
         ]);
+
         return $entityManager;
     }
 
     public function test_custom_mapping_type(): void
     {
         $entityManager = self::prepareEntityManager();
+
         $createdNote = new Some\Note($this->zonedDateTime, 'test');
         $entityManager->persist($createdNote);
         $entityManager->flush();
@@ -46,7 +51,7 @@ final class DoctrineTest extends TestCase
                 " WHERE note.content = 'test'" .
                 ' AND note.createdAtUtc = :utc' .
                 ' AND note.createdAtUtc != :zoned' . // @todo wait until Doctrine ORM fixes this issue and change it to `=`
-                ' AND note.updatedAtUtc IS NULL',
+                ' AND note.deletedAtUtc IS NULL',
             )
             ->setParameter('utc', $this->utcDateTime)
             ->setParameter('zoned', $this->zonedDateTime)
@@ -58,8 +63,8 @@ final class DoctrineTest extends TestCase
             'Unexpected createdNote.createdAtUtc',
         );
         self::assertNull(
-            $createdNote->updatedAtUtc,
-            'Unexpected createdNote.updatedAtUtc',
+            $createdNote->deletedAtUtc,
+            'Unexpected createdNote.deletedAtUtc',
         );
         self::assertDateTimeEquals(
             $this->utcDateTime,
@@ -67,14 +72,15 @@ final class DoctrineTest extends TestCase
             'Unexpected loadedNote.createdAtUtc',
         );
         self::assertNull(
-            $loadedNote->updatedAtUtc,
-            'Unexpected loadedNote.updatedAtUtc',
+            $loadedNote->deletedAtUtc,
+            'Unexpected loadedNote.deletedAtUtc',
         );
     }
 
     public function test_embeddables(): void
     {
         $entityManager = self::prepareEntityManager();
+
         $createdNote = new Some\Note($this->zonedDateTime, 'test');
         $entityManager->persist($createdNote);
         $entityManager->flush();
@@ -85,7 +91,7 @@ final class DoctrineTest extends TestCase
                     " WHERE note.content = 'test'" .
                     ' AND note.createdAt.utc = :utc AND note.createdAt.local = :local' .
                     ' AND note.createdAt2.utc = :utc AND note.createdAt2.timezone = :timezone' .
-                    ' AND note.updatedAt.utc IS NULL',
+                    ' AND note.deletedAt.utc IS NULL',
             )
             ->setParameter('utc', JavaSe8\Time::toLocalDateTime($this->utcDateTime))
             ->setParameter('local', $this->localDateTime)
@@ -98,8 +104,8 @@ final class DoctrineTest extends TestCase
             'Unexpected createdNote.getCreatedAt()',
         );
         self::assertNull(
-            $createdNote->getUpdatedAt(),
-            'Unexpected createdNote.getUpdatedAt()',
+            $createdNote->getDeletedAt(),
+            'Unexpected createdNote.getDeletedAt()',
         );
         self::assertDateTimeEquals(
             $this->zonedDateTime,
@@ -107,8 +113,8 @@ final class DoctrineTest extends TestCase
             'Unexpected loadedNote.getCreatedAt()',
         );
         self::assertNull(
-            $loadedNote->getUpdatedAt(),
-            'Unexpected loadedNote.getUpdatedAt()',
+            $loadedNote->getDeletedAt(),
+            'Unexpected loadedNote.getDeletedAt()',
         );
     }
 
