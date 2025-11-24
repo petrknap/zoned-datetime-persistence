@@ -20,7 +20,7 @@ final public class Note
     private @Nullable Long id;
 
     /**
-     * Example: utc date-time with local date-time
+     * Example: UTC date-time with local date-time
      */
     @Embedded
     @AttributeOverrides({
@@ -30,7 +30,7 @@ final public class Note
     private @NotNull UtcWithLocal createdAt;
 
     /**
-     * Example: utc date-time with timezone identifier
+     * Example: UTC date-time with timezone identifier
      */
     @Embedded
     @AttributeOverrides({
@@ -46,14 +46,14 @@ final public class Note
     private @Nullable UtcWithLocal deletedAt;
 
     /**
-     * Example: utc date-time
+     * Example: UTC date-time converter
      */
     @Column(nullable = false)
     @Convert(converter = UtcDateTimeConverter.class)
     public @NotNull ZonedDateTime createdAtUtc;
 
     /**
-     * Example: nullable converter
+     * Example: converted nullable
      */
     @Column
     @Convert(converter = UtcDateTimeConverter.class)
@@ -76,6 +76,10 @@ final public class Note
 
     public @NotNull ZonedDateTime getCreatedAt() {
         return createdAt.toZonedDateTime();
+    }
+
+    public @NotNull ZonedDateTime getCreatedAt2() {
+        return createdAt2.toZonedDateTime();
     }
 
     public @Nullable ZonedDateTime getDeletedAt() {

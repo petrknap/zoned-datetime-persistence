@@ -29,7 +29,6 @@ final class ReadmeTest extends TestCase implements MarkdownFileTestInterface
             UtcWithTimezone::class =>
                 'UtcWithTimezone: 2025-03-30 03:45 CEST' . PHP_EOL .
                 'UtcWithLocal:    2025-03-30 02:45 GMT+0100' . PHP_EOL,
-            UtcDateTimeType::class => null,
         ];
     }
 }

@@ -21,7 +21,7 @@ final class JpaTest extends TestCase
         return entityManager;
     }
 
-    @Test void attribute_converter()
+    @Test void loads_persisted_entity()
     {
         EntityManager entityManager = prepareEntityManager();
 
@@ -33,78 +33,92 @@ final class JpaTest extends TestCase
                 .createQuery(
                         "SELECT note FROM " + some.Note.class.getName() + " note" +
                                 " WHERE note.content = 'test'" +
-                                " AND note.createdAtUtc = :utc" +
+                                // -------------------------------------------------------------------------------------
+                                // Case: UTC date-time with local date-time
+                                " AND note.createdAt.utc = :localUtc AND note.createdAt.local = :local" +
+                                // -------------------------------------------------------------------------------------
+                                // Case: UTC date-time with timezone identifier
+                                " AND note.createdAt2.utc = :localUtc AND note.createdAt2.timezone = :timezone" +
+                                // -------------------------------------------------------------------------------------
+                                // Case: nullable embeddable
+                                " AND note.deletedAt.utc IS NULL" +
+                                // -------------------------------------------------------------------------------------
+                                // Case: UTC date-time converter
+                                " AND note.createdAtUtc = :zonedUtc" +
                                 " AND note.createdAtUtc = :zoned" +
-                                " AND note.deletedAtUtc IS NULL",
+                                // -------------------------------------------------------------------------------------
+                                // Case: converted nullable
+                                " AND note.deletedAtUtc IS NULL" +
+                                // -------------------------------------------------------------------------------------
+                                " ",
                         some.Note.class
                 )
-                .setParameter("utc", utcDateTime)
+                .setParameter("localUtc", utcDateTime.toLocalDateTime())
+                .setParameter("local", localDateTime)
+                .setParameter("timezone", zonedDateTime.getZone().getId())
+                .setParameter("zonedUtc", utcDateTime)
                 .setParameter("zoned", zonedDateTime)
                 .getSingleResult();
 
         assertAll(
-                () -> assertEquals(
-                        utcDateTime,
-                        createdNote.createdAtUtc,
-                        "Unexpected createdNote.createdAtUtc"
-                ),
-                () -> assertNull(
-                        createdNote.deletedAtUtc,
-                        "Unexpected createdNote.deletedAtUtc"
-                ),
-                () -> assertEquals(
-                        utcDateTime,
-                        loadedNote.createdAtUtc,
-                        "Unexpected loadedNote.createdAtUtc"
-                ),
-                () -> assertNull(
-                        loadedNote.deletedAtUtc,
-                        "Unexpected loadedNote.deletedAtUtc"
-                )
-        );
-    }
-
-    @Test void embeddables()
-    {
-        EntityManager entityManager = prepareEntityManager();
-
-        some.Note createdNote = new some.Note(zonedDateTime, "test");
-        entityManager.persist(createdNote);
-        entityManager.flush();
-        entityManager.clear();
-        some.Note loadedNote = entityManager
-                .createQuery(
-                        "SELECT note FROM " + some.Note.class.getName() + " note" +
-                                " WHERE note.content = 'test'" +
-                                " AND note.createdAt.utc = :utc AND note.createdAt.local = :local" +
-                                " AND note.createdAt2.utc = :utc AND note.createdAt2.timezone = :timezone" +
-                                " AND note.deletedAt.utc IS NULL",
-                        some.Note.class
-                )
-                .setParameter("utc", utcDateTime.toLocalDateTime())
-                .setParameter("local", localDateTime)
-                .setParameter("timezone", zonedDateTime.getZone().getId())
-                .getSingleResult();
-
-        assertAll(
+                // -----------------------------------------------------------------------------------------------------
+                // Case: UTC date-time with local date-time
                 () -> assertEquals(
                         zonedDateTime,
                         createdNote.getCreatedAt(),
                         "Unexpected createdNote.getCreatedAt()"
-                ),
-                () -> assertNull(
-                        createdNote.getDeletedAt(),
-                        "Unexpected createdNote.getDeletedAt()"
                 ),
                 () -> assertEquals(
                         zonedDateTime,
                         loadedNote.getCreatedAt(),
                         "Unexpected loadedNote.getCreatedAt()"
                 ),
+                // -----------------------------------------------------------------------------------------------------
+                // Case: UTC date-time with timezone identifier
+                () -> assertEquals(
+                        zonedDateTime,
+                        createdNote.getCreatedAt2(),
+                        "Unexpected createdNote.getCreatedAt2()"
+                ),
+                () -> assertEquals(
+                        zonedDateTime,
+                        loadedNote.getCreatedAt2(),
+                        "Unexpected loadedNote.getCreatedAt2()"
+                ),
+                // -----------------------------------------------------------------------------------------------------
+                // Case: nullable embeddable
+                () -> assertNull(
+                        createdNote.getDeletedAt(),
+                        "Unexpected createdNote.getDeletedAt()"
+                ),
                 () -> assertNull(
                         loadedNote.getDeletedAt(),
                         "Unexpected loadedNote.getDeletedAt()"
-                )
+                ),
+                // -----------------------------------------------------------------------------------------------------
+                // Case: UTC date-time converter
+                () -> assertEquals(
+                        utcDateTime,
+                        createdNote.createdAtUtc,
+                        "Unexpected createdNote.createdAtUtc"
+                ),
+                () -> assertEquals(
+                        utcDateTime,
+                        loadedNote.createdAtUtc,
+                        "Unexpected loadedNote.createdAtUtc"
+                ),
+                // -----------------------------------------------------------------------------------------------------
+                // Case: converted nullable
+                () -> assertNull(
+                        createdNote.deletedAtUtc,
+                        "Unexpected createdNote.deletedAtUtc"
+                ),
+                () -> assertNull(
+                        loadedNote.deletedAtUtc,
+                        "Unexpected loadedNote.deletedAtUtc"
+                ),
+                // -----------------------------------------------------------------------------------------------------
+                () -> {}
         );
     }
 }

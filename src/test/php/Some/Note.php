@@ -23,13 +23,13 @@ final class Note
     protected int|null $id = null;
 
     /**
-     * Example: utc date-time with local date-time
+     * Example: UTC date-time with local date-time
      */
     #[ORM\Embedded(columnPrefix: 'created_at__')]
     protected UtcWithLocal $createdAt;
 
     /**
-     * Example: utc date-time with timezone identifier
+     * Example: UTC date-time with timezone identifier
      */
     #[ORM\Embedded(columnPrefix: 'created_at_2__')]
     protected UtcWithTimezone $createdAt2;
@@ -41,13 +41,13 @@ final class Note
     protected UtcWithLocal|null $deletedAt = null;
 
     /**
-     * Example: utc date-time
+     * Example: UTC date-time type
      */
     #[ORM\Column(name: 'created_at_utc', type: UtcDateTimeType::NAME, options: ['default' => 'CURRENT_TIMESTAMP'])]
     public DateTimeInterface $createdAtUtc;
 
     /**
-     * Example: nullable type
+     * Example: typed nullable
      */
     #[ORM\Column(name: 'deleted_at_utc', type: UtcDateTimeType::NAME, nullable: true)]
     public DateTimeInterface|null $deletedAtUtc = null;
@@ -79,6 +79,11 @@ final class Note
     public function getCreatedAt(): DateTimeInterface
     {
         return $this->createdAt->toZonedDateTime();
+    }
+
+    public function getCreatedAt2(): DateTimeInterface
+    {
+        return $this->createdAt2->toZonedDateTime();
     }
 
     public function getDeletedAt(): DateTimeInterface|null
