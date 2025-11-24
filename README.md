@@ -13,11 +13,12 @@ This package addresses the issue by providing tools that treat zoned date-time a
 
 
 
-## Embeddables
+## Implemented
 
 - [UTC with local date-time](#utc-with-local-date-time)
   - [How to use it](#how-to-use-it)
 - [UTC with timezone](#utc-with-timezone)
+- [UTC date-time converter / type](#utc-date-time-converter--type)
 
 
 ### UTC with local date-time
@@ -87,7 +88,6 @@ foreach($notes as $note) {
 
 If you want to **preserve the original timezone as is**, you cannot use [`UtcWithLocal`](#utc-with-local-date-time), because it works over fixed offsets.
 In this case, you need to use this implementation.
-It is especially handful during daylight saving time transitions.
 
 ```php
 namespace PetrKnap\ZonedDateTimePersistence;
@@ -107,6 +107,32 @@ echo 'UtcWithLocal:    ' . (new UtcWithLocal($now))
 UtcWithTimezone: 2025-03-30 03:45 CEST
 UtcWithLocal:    2025-03-30 02:45 GMT+0100
 ```
+
+
+### UTC date-time converter / type
+
+> `UtcDateTimeConverter` <sup><small>Jakarta Persistence API</small></sup>
+
+This converter transparently manages conversions of `ZonedDateTime`, including JPQL parameters.
+That means you **no longer need to worry** about manual timezone adjustments.
+
+For examples, see [the attributes `Note.createdAtUtc` and `Note.updatedAtUtc`](./src/test/java/some/Note.java).
+
+> `UtcDateTimeType` <sup><small>Doctrine ORM</small></sup>
+
+In contrast to `UtcDateTimeConverter`, this type does **not** automatically adjust the timezone of DQL arguments.
+You must therefore **handle timezone conversions explicitly in your queries**.
+
+**Important:** Before using, you need to **register the type** in your Doctrine configuration.
+```php
+Doctrine\DBAL\Types\Type::addType(
+    PetrKnap\ZonedDateTimePersistence\UtcDateTimeType::NAME,
+    PetrKnap\ZonedDateTimePersistence\UtcDateTimeType::class,
+);
+```
+
+For examples, see [the attributes `Note.createdAtUtc` and `Note.updatedAtUtc`](./src/test/php/Some/Note.php).
+
 
 ---
 
