@@ -43,7 +43,7 @@ final public class Note
      * Example: nullable embeddable
      */
     @Embedded
-    private @Nullable UtcWithLocal updatedAt;
+    private @Nullable UtcWithLocal deletedAt;
 
     /**
      * Example: utc date-time
@@ -57,7 +57,7 @@ final public class Note
      */
     @Column
     @Convert(converter = UtcDateTimeConverter.class)
-    public @Nullable ZonedDateTime updatedAtUtc;
+    public @Nullable ZonedDateTime deletedAtUtc;
 
     @Column(nullable = false)
     private @NotNull String content;
@@ -74,25 +74,11 @@ final public class Note
 
     private Note() {}
 
-    public @Nullable Long getId() {
-        return id;
-    }
-
     public @NotNull ZonedDateTime getCreatedAt() {
         return createdAt.toZonedDateTime();
     }
 
-    public @Nullable ZonedDateTime getUpdatedAt() {
-        return updatedAt != null ? updatedAt.toZonedDateTime() : null;
-    }
-
-    public @NotNull String getContent() {
-        return content;
-    }
-
-    public void setContent(@NotNull String content) {
-        this.content = content;
-        updatedAt = new UtcWithLocal(ZonedDateTime.now());
-        updatedAtUtc = ZonedDateTime.now(ZoneId.of("UTC"));
+    public @Nullable ZonedDateTime getDeletedAt() {
+        return deletedAt != null ? deletedAt.toZonedDateTime() : null;
     }
 }

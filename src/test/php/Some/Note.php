@@ -37,29 +37,29 @@ final class Note
     /**
      * Example: nullable embeddable
      */
-    #[ORM\Embedded]
-    protected UtcWithLocal|null $updatedAt = null;
+    #[ORM\Embedded(columnPrefix: 'deleted_at__')]
+    protected UtcWithLocal|null $deletedAt = null;
 
     /**
      * Example: utc date-time
      */
-    #[ORM\Column(name: 'created_at_utc', type: UtcDateTimeType::NAME, nullable: true)] // nullable for testing purposes only
+    #[ORM\Column(name: 'created_at_utc', type: UtcDateTimeType::NAME, options: ['default' => 'CURRENT_TIMESTAMP'])]
     public DateTimeInterface $createdAtUtc;
 
     /**
      * Example: nullable type
      */
-    #[ORM\Column(name: 'updated_at_utc', type: UtcDateTimeType::NAME, nullable: true)]
-    public DateTimeInterface|null $updatedAtUtc = null;
+    #[ORM\Column(name: 'deleted_at_utc', type: UtcDateTimeType::NAME, nullable: true)]
+    public DateTimeInterface|null $deletedAtUtc = null;
 
     public function __construct(
-        DateTimeInterface $createdAt,
+        DateTimeImmutable $createdAt,
         #[ORM\Column(name: 'content', nullable: false)]
         protected string $content,
     ) {
         $this->createdAt = new UtcWithLocal($createdAt);
         $this->createdAt2 = new UtcWithTimezone($createdAt);
-        $this->createdAtUtc = DateTimeImmutable::createFromInterface($createdAt)->setTimezone(new DateTimeZone('UTC'));
+        $this->createdAtUtc = $createdAt->setTimezone(new DateTimeZone('UTC'));
     }
 
     /**
@@ -68,22 +68,7 @@ final class Note
     #[ORM\PostLoad]
     public function fixNullables(): void
     {
-        $this->updatedAt = $this->updatedAt?->asNullable();
-    }
-
-    public function getId(): int|null
-    {
-        return $this->id;
-    }
-
-    public function getCreatedAt(): DateTimeInterface
-    {
-        return $this->createdAt->toZonedDateTime();
-    }
-
-    public function getUpdatedAt(): DateTimeInterface|null
-    {
-        return $this->updatedAt?->toZonedDateTime();
+        $this->deletedAt = $this->deletedAt?->asNullable();
     }
 
     public function getContent(): string
@@ -91,10 +76,13 @@ final class Note
         return $this->content;
     }
 
-    public function setContent(string $content): void
+    public function getCreatedAt(): DateTimeInterface
     {
-        $this->content = $content;
-        $this->updatedAt = new UtcWithLocal(new DateTimeImmutable('now'));
-        $this->updatedAtUtc = new DateTimeImmutable('now', new DateTimeZone('UTC'));
+        return $this->createdAt->toZonedDateTime();
+    }
+
+    public function getDeletedAt(): DateTimeInterface|null
+    {
+        return $this->deletedAt?->toZonedDateTime();
     }
 }

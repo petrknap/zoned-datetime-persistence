@@ -24,6 +24,7 @@ final class JpaTest extends TestCase
     @Test void attribute_converter()
     {
         EntityManager entityManager = prepareEntityManager();
+
         some.Note createdNote = new some.Note(zonedDateTime, "test");
         entityManager.persist(createdNote);
         entityManager.flush();
@@ -34,7 +35,7 @@ final class JpaTest extends TestCase
                                 " WHERE note.content = 'test'" +
                                 " AND note.createdAtUtc = :utc" +
                                 " AND note.createdAtUtc = :zoned" +
-                                " AND note.updatedAtUtc IS NULL",
+                                " AND note.deletedAtUtc IS NULL",
                         some.Note.class
                 )
                 .setParameter("utc", utcDateTime)
@@ -48,8 +49,8 @@ final class JpaTest extends TestCase
                         "Unexpected createdNote.createdAtUtc"
                 ),
                 () -> assertNull(
-                        createdNote.updatedAtUtc,
-                        "Unexpected createdNote.updatedAtUtc"
+                        createdNote.deletedAtUtc,
+                        "Unexpected createdNote.deletedAtUtc"
                 ),
                 () -> assertEquals(
                         utcDateTime,
@@ -57,8 +58,8 @@ final class JpaTest extends TestCase
                         "Unexpected loadedNote.createdAtUtc"
                 ),
                 () -> assertNull(
-                        loadedNote.updatedAtUtc,
-                        "Unexpected loadedNote.updatedAtUtc"
+                        loadedNote.deletedAtUtc,
+                        "Unexpected loadedNote.deletedAtUtc"
                 )
         );
     }
@@ -66,6 +67,7 @@ final class JpaTest extends TestCase
     @Test void embeddables()
     {
         EntityManager entityManager = prepareEntityManager();
+
         some.Note createdNote = new some.Note(zonedDateTime, "test");
         entityManager.persist(createdNote);
         entityManager.flush();
@@ -76,7 +78,7 @@ final class JpaTest extends TestCase
                                 " WHERE note.content = 'test'" +
                                 " AND note.createdAt.utc = :utc AND note.createdAt.local = :local" +
                                 " AND note.createdAt2.utc = :utc AND note.createdAt2.timezone = :timezone" +
-                                " AND note.updatedAt.utc IS NULL",
+                                " AND note.deletedAt.utc IS NULL",
                         some.Note.class
                 )
                 .setParameter("utc", utcDateTime.toLocalDateTime())
@@ -91,8 +93,8 @@ final class JpaTest extends TestCase
                         "Unexpected createdNote.getCreatedAt()"
                 ),
                 () -> assertNull(
-                        createdNote.getUpdatedAt(),
-                        "Unexpected createdNote.getUpdatedAt()"
+                        createdNote.getDeletedAt(),
+                        "Unexpected createdNote.getDeletedAt()"
                 ),
                 () -> assertEquals(
                         zonedDateTime,
@@ -100,8 +102,8 @@ final class JpaTest extends TestCase
                         "Unexpected loadedNote.getCreatedAt()"
                 ),
                 () -> assertNull(
-                        loadedNote.getUpdatedAt(),
-                        "Unexpected loadedNote.getUpdatedAt()"
+                        loadedNote.getDeletedAt(),
+                        "Unexpected loadedNote.getDeletedAt()"
                 )
         );
     }
