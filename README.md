@@ -121,23 +121,15 @@ For examples, see [the attributes `Note.createdAtUtc` and `Note.deletedAtUtc`](.
 
 > `UtcDateTimeType` <sup><small>Doctrine ORM</small></sup>
 
-In contrast to `UtcDateTimeConverter`, this type does **not** automatically adjust the timezone of DQL arguments.
-You must therefore **handle timezone conversions explicitly in your queries**.
-But the conversions before flush and after hydration works well.
-
-**Important:** Before using, you need to **register the type** in your Doctrine configuration.
-```php
-Doctrine\DBAL\Types\Type::addType(
-    PetrKnap\ZonedDateTimePersistence\UtcDateTimeType::NAME,
-    PetrKnap\ZonedDateTimePersistence\UtcDateTimeType::class,
-);
-```
+In contrast to `UtcDateTimeConverter`, this type does **not** automatically adjust the timezone of DQL parameters.
+You must therefore **provide the type when you are calling `setParameter`** on your queries.
+Also, you have to **register the type** in your Doctrine configuration manually.
 
 For examples, see [the attributes `Note.createdAtUtc` and `Note.deletedAtUtc`](./src/test/php/Some/Note.php) and [the `DoctrineTest`](./src/test/php/DoctrineTest.php).
 
 > `AsUtcDateTime` <sup><small>Eloquent</small></sup>
 
-In contrast to `UtcDateTimeConverter` and `UtcDateTimeType`, this cast may or may **not** adjust the timezone of any Eloquent input.
+In contrast to `UtcDateTimeConverter` and `UtcDateTimeType`, this cast may or may **not** adjust the timezone of any input.
 You should therefore **handle timezone conversions explicitly everytime you are providing date-time into Eloquent**.
 But the conversion after hydration works well.
 
