@@ -7,6 +7,7 @@ namespace PetrKnap\ZonedDateTimePersistence\Some;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
+use PetrKnap\ZonedDateTimePersistence\AsPrivate;
 use PetrKnap\ZonedDateTimePersistence\AsUtc;
 
 /**
@@ -50,6 +51,10 @@ final class NoteModel extends Model
     protected function casts(): array
     {
         return [
+            'created_at__utc' => AsPrivate::class,
+            'created_at__local' => AsPrivate::class,
+            'deleted_at__utc' => AsPrivate::class,
+            'deleted_at__local' => AsPrivate::class,
             // Example: UTC date-time cast
             'created_at_utc' => AsUtc::dateTime(),
             // Example: casted nullable

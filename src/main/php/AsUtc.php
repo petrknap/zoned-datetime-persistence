@@ -29,6 +29,8 @@ final class AsUtc
     }
 
     /**
+     * @note you can cast raw attributes {@see AsPrivate}
+     *
      * @see UtcWithLocal
      */
     public static function withLocal(

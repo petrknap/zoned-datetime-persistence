@@ -7,6 +7,7 @@ namespace PetrKnap\ZonedDateTimePersistence;
 use Illuminate\Database\Capsule\Manager;
 use Illuminate\Database\Connection;
 use Illuminate\Support\Carbon;
+use LogicException;
 use PDO;
 
 final class EloquentTest extends TestCase
@@ -106,5 +107,18 @@ final class EloquentTest extends TestCase
             'Unexpected loadedNote.deleted_at_utc',
         );
         // -------------------------------------------------------------------------------------------------------------
+    }
+
+    public function test_private_cast(): void
+    {
+        $note = new Some\NoteModel();
+
+        self::assertEquals(
+            $note->non_existend_atribute,
+            $note->created_at__utc,
+        );
+
+        self::expectException(LogicException::class);
+        $note->created_at__utc = Carbon::now();
     }
 }
