@@ -41,6 +41,7 @@ final class EloquentTest extends TestCase
         $createdNote = new Some\NoteModel();
         $createdNote->content = 'test';
         $createdNote->created_at = $zonedDateTime;
+        $createdNote->created_at_2 = $zonedDateTime;
         $createdNote->created_at_utc = $utcDateTime;
         $createdNote->save();
         $loadedNote = Some\NoteModel::query()
@@ -49,6 +50,10 @@ final class EloquentTest extends TestCase
             // Case: UTC date-time with local date-time
             ->where('created_at__utc', '=', $utcDateTime->format($noteDateFormat))
             ->where('created_at__local', '=', $localDateTime->format($noteDateFormat))
+            // ---------------------------------------------------------------------------------------------------------
+            // Case: UTC date-time with timezone
+            ->where('created_at_2__utc', '=', $utcDateTime->format($noteDateFormat))
+            ->where('created_at_2__timezone', '=', $zonedDateTime->getTimezone()->getName())
             // ---------------------------------------------------------------------------------------------------------
             // Case: nullable attribute
             ->whereNull('deleted_at__utc')
@@ -73,6 +78,18 @@ final class EloquentTest extends TestCase
             $zonedDateTime,
             $loadedNote->created_at,
             'Unexpected loadedNote.created_at',
+        );
+        // -------------------------------------------------------------------------------------------------------------
+        // Case: UTC date-time with timezone
+        self::assertDateTimeEquals(
+            $zonedDateTime,
+            $createdNote->created_at_2,
+            'Unexpected createdNote.created_at_2',
+        );
+        self::assertDateTimeEquals(
+            $zonedDateTime,
+            $loadedNote->created_at_2,
+            'Unexpected loadedNote.created_at_2',
         );
         // -------------------------------------------------------------------------------------------------------------
         // Case: nullable attribute

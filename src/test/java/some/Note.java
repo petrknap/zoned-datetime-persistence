@@ -30,7 +30,7 @@ final public class Note
     private @NotNull UtcWithLocal createdAt;
 
     /**
-     * Example: UTC date-time with timezone identifier
+     * Example: UTC date-time with timezone
      */
     @Embedded
     @AttributeOverrides({
