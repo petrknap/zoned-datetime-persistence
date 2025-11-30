@@ -24,12 +24,13 @@ final class AsUtc
      */
     public static function dateTime(
         string|null $dateTimeFormat = null,
+        bool|null $readonly = null,
     ): string {
-        return AsUtcDateTime::class . ':' . $dateTimeFormat;
+        return AsUtcDateTime::class . ':' . $dateTimeFormat . ',' . $readonly;
     }
 
     /**
-     * @note you can cast used attributes {@see AsPrivate}
+     * @note you can cast used attributes as readonly {@see AsUtc::dateTime()} or {@see AsPrivate}
      *
      * @see UtcWithLocal
      */
@@ -57,7 +58,7 @@ final class AsUtc
     }
 
     /**
-     * @note you can cast used attribute {@see AsPrivate}
+     * @note you can cast used attribute as readonly {@see AsUtc::dateTime()} or {@see AsPrivate}
      *
      * @see UtcWithSystemTimezone
      */
@@ -82,7 +83,7 @@ final class AsUtc
     }
 
     /**
-     * @note you can cast used attributes {@see AsPrivate}
+     * @note you can cast used attributes as readonly {@see AsUtc::dateTime()} or {@see AsPrivate}
      *
      * @see UtcWithTimezone
      */

@@ -10,6 +10,7 @@ use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 use InvalidArgumentException;
+use LogicException;
 use Throwable;
 
 /**
@@ -22,15 +23,23 @@ use Throwable;
 final class AsUtcDateTime implements CastsAttributes
 {
     private readonly string|null $dateTimeFormat;
+    private readonly bool $isReadonly;
     private readonly DateTimeZone $utc;
 
     public function __construct(
         string|null $dateTimeFormat = null,
+        string|bool|null $readonly = null,
     ) {
         if ($dateTimeFormat === '') {
             $dateTimeFormat = null;
         }
         $this->dateTimeFormat = $dateTimeFormat;
+
+        $this->isReadonly = match ($readonly) {
+            true, 'true', '1', 'readonly', 'ro' => true,
+            default => false,
+        };
+
         $this->utc = new DateTimeZone('UTC');
     }
 
@@ -57,6 +66,10 @@ final class AsUtcDateTime implements CastsAttributes
 
     public function set(Model $model, string $key, mixed $value, array $attributes): string|null
     {
+        if ($this->isReadonly) {
+            throw new LogicException(sprintf('%s::$%s is readonly', get_class($model), $key));
+        }
+
         if ($value === null) {
             return null;
         }
