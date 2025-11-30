@@ -57,6 +57,31 @@ final class AsUtc
     }
 
     /**
+     * @note you can cast used attribute {@see AsPrivate}
+     *
+     * @see UtcWithSystemTimezone
+     */
+    public static function withSystemTimezone(
+        string $utcDateTimeAttributeName,
+        string $dateTimeFormat,
+    ): Attribute {
+        return Attribute::make(
+            get: static fn (mixed $_, array $attributes): Carbon|null => self::toNullableCarbon(
+                UtcWithSystemTimezone::fromFormattedValue(
+                    utcDateTime: $attributes[$utcDateTimeAttributeName] ?? null,
+                    dateTimeFormat: $dateTimeFormat,
+                )?->toZonedDateTime(),
+            ),
+            set: static function (DateTimeInterface|null $value) use ($utcDateTimeAttributeName, $dateTimeFormat): array {
+                $utcWithSystemTimezone = $value !== null ? new UtcWithSystemTimezone($value) : null;
+                return [
+                    $utcDateTimeAttributeName => $utcWithSystemTimezone?->getUtcDateTime(format: $dateTimeFormat),
+                ];
+            },
+        );
+    }
+
+    /**
      * @note you can cast used attributes {@see AsPrivate}
      *
      * @see UtcWithTimezone
