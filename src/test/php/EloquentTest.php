@@ -148,8 +148,19 @@ final class EloquentTest extends TestCase
 
         self::assertEquals(
             $note->non_existend_atribute,
-            $note->created_at__utc,
+            $note->created_at__local,
         );
+
+        self::expectException(LogicException::class);
+        $note->created_at__local = Carbon::now();
+    }
+
+    public function test_utc_datetime_readonly_cast(): void
+    {
+        $note = new Some\NoteModel();
+        $note->created_at = Carbon::now();
+
+        self::assertInstanceOf(Carbon::class, $note->created_at__utc);
 
         self::expectException(LogicException::class);
         $note->created_at__utc = Carbon::now();

@@ -13,9 +13,13 @@ use PetrKnap\ZonedDateTimePersistence\AsUtc;
 /**
  * @property string $content
  * @property Carbon $created_at
+ * @property-read Carbon $created_at__utc
  * @property Carbon $created_at_2
+ * @property-read Carbon $created_at_2__utc
  * @property Carbon $created_at_3
+ * @property-read Carbon $created_at_3__utc
  * @property Carbon|null $deleted_at
+ * @property-read Carbon|null $deleted_at__utc
  * @property Carbon $created_at_utc
  * @property Carbon|null $deleted_at_utc
  */
@@ -76,12 +80,12 @@ final class NoteModel extends Model
     protected function casts(): array
     {
         return [
-            'created_at__utc' => AsPrivate::class,
+            'created_at__utc' => AsUtc::dateTime(readonly: true),
             'created_at__local' => AsPrivate::class,
-            'created_at_2__utc' => AsPrivate::class,
+            'created_at_2__utc' => AsUtc::dateTime(readonly: true),
             'created_at_2__timezone' => AsPrivate::class,
-            'created_at_3__utc' => AsPrivate::class,
-            'deleted_at__utc' => AsPrivate::class,
+            'created_at_3__utc' => AsUtc::dateTime(readonly: true),
+            'deleted_at__utc' => AsUtc::dateTime(readonly: true),
             'deleted_at__local' => AsPrivate::class,
             // Example: UTC date-time cast
             'created_at_utc' => AsUtc::dateTime(),
