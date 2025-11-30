@@ -29,7 +29,7 @@ final class AsUtc
     }
 
     /**
-     * @note you can cast raw attributes {@see AsPrivate}
+     * @note you can cast used attributes {@see AsPrivate}
      *
      * @see UtcWithLocal
      */
@@ -41,16 +41,44 @@ final class AsUtc
         return Attribute::make(
             get: static fn (mixed $_, array $attributes): Carbon|null => self::toNullableCarbon(
                 UtcWithLocal::fromFormattedValues(
-                    $attributes[$utcDateTimeAttributeName] ?? null,
-                    $attributes[$localDateTimeAttributeName] ?? null,
-                    $dateTimeFormat,
+                    utcDateTime: $attributes[$utcDateTimeAttributeName] ?? null,
+                    localDateTime: $attributes[$localDateTimeAttributeName] ?? null,
+                    dateTimeFormat: $dateTimeFormat,
                 )?->toZonedDateTime(),
             ),
             set: static function (DateTimeInterface|null $value) use ($utcDateTimeAttributeName, $localDateTimeAttributeName, $dateTimeFormat): array {
                 $utcWithLocal = $value !== null ? new UtcWithLocal($value) : null;
                 return [
-                    $utcDateTimeAttributeName => $utcWithLocal?->getUtcDateTime($dateTimeFormat),
-                    $localDateTimeAttributeName => $utcWithLocal?->getLocalDateTime($dateTimeFormat),
+                    $utcDateTimeAttributeName => $utcWithLocal?->getUtcDateTime(format: $dateTimeFormat),
+                    $localDateTimeAttributeName => $utcWithLocal?->getLocalDateTime(format: $dateTimeFormat),
+                ];
+            },
+        );
+    }
+
+    /**
+     * @note you can cast used attributes {@see AsPrivate}
+     *
+     * @see UtcWithTimezone
+     */
+    public static function withTimezone(
+        string $utcDateTimeAttributeName,
+        string $dateTimeFormat,
+        string $timezoneAttributeName,
+    ): Attribute {
+        return Attribute::make(
+            get: static fn (mixed $_, array $attributes): Carbon|null => self::toNullableCarbon(
+                UtcWithTimezone::fromFormattedValues(
+                    utcDateTime: $attributes[$utcDateTimeAttributeName] ?? null,
+                    dateTimeFormat: $dateTimeFormat,
+                    timezone: $attributes[$timezoneAttributeName] ?? null,
+                )?->toZonedDateTime(),
+            ),
+            set: static function (DateTimeInterface|null $value) use ($utcDateTimeAttributeName, $dateTimeFormat, $timezoneAttributeName): array {
+                $utcWithTimezone = $value !== null ? new UtcWithTimezone($value) : null;
+                return [
+                    $utcDateTimeAttributeName => $utcWithTimezone?->getUtcDateTime(format: $dateTimeFormat),
+                    $timezoneAttributeName => $utcWithTimezone?->getTimezone(formatted: true),
                 ];
             },
         );

@@ -13,6 +13,7 @@ use PetrKnap\ZonedDateTimePersistence\AsUtc;
 /**
  * @property string $content
  * @property Carbon $created_at
+ * @property Carbon $created_at_2
  * @property Carbon|null $deleted_at
  * @property Carbon $created_at_utc
  * @property Carbon|null $deleted_at_utc
@@ -37,6 +38,18 @@ final class NoteModel extends Model
     }
 
     /**
+     * Example: UTC date-time with timezone
+     */
+    protected function createdAt2(): Attribute
+    {
+        return AsUtc::withTimezone(
+            'created_at_2__utc',
+            $this->getDateFormat(),
+            'created_at_2__timezone',
+        );
+    }
+
+    /**
      * Example: nullable attribute
      */
     protected function deletedAt(): Attribute
@@ -53,6 +66,8 @@ final class NoteModel extends Model
         return [
             'created_at__utc' => AsPrivate::class,
             'created_at__local' => AsPrivate::class,
+            'created_at_2__utc' => AsPrivate::class,
+            'created_at_2__timezone' => AsPrivate::class,
             'deleted_at__utc' => AsPrivate::class,
             'deleted_at__local' => AsPrivate::class,
             // Example: UTC date-time cast

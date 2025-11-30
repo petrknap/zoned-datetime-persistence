@@ -29,7 +29,7 @@ final class Note
     protected UtcWithLocal $createdAt;
 
     /**
-     * Example: UTC date-time with timezone identifier
+     * Example: UTC date-time with timezone
      */
     #[ORM\Embedded(columnPrefix: 'created_at_2__')]
     protected UtcWithTimezone $createdAt2;

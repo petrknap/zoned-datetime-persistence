@@ -37,7 +37,7 @@ final class JpaTest extends TestCase
                                 // Case: UTC date-time with local date-time
                                 " AND note.createdAt.utc = :localUtc AND note.createdAt.local = :local" +
                                 // -------------------------------------------------------------------------------------
-                                // Case: UTC date-time with timezone identifier
+                                // Case: UTC date-time with timezone
                                 " AND note.createdAt2.utc = :localUtc AND note.createdAt2.timezone = :timezone" +
                                 // -------------------------------------------------------------------------------------
                                 // Case: nullable embeddable
@@ -74,7 +74,7 @@ final class JpaTest extends TestCase
                         "Unexpected loadedNote.getCreatedAt()"
                 ),
                 // -----------------------------------------------------------------------------------------------------
-                // Case: UTC date-time with timezone identifier
+                // Case: UTC date-time with timezone
                 () -> assertEquals(
                         zonedDateTime,
                         createdNote.getCreatedAt2(),
