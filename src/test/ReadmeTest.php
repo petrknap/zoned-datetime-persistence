@@ -6,9 +6,9 @@ namespace PetrKnap;
 
 use PetrKnap\Shorts\PhpUnit\MarkdownFileTestInterface;
 use PetrKnap\Shorts\PhpUnit\MarkdownFileTestTrait;
-use PetrKnap\ZonedDateTimePersistence\UtcDateTimeType;
-use PetrKnap\ZonedDateTimePersistence\UtcWithLocal;
-use PetrKnap\ZonedDateTimePersistence\UtcWithTimezone;
+use PetrKnap\Persistence\ZonedDateTime\UtcDateTimeType;
+use PetrKnap\Persistence\ZonedDateTime\UtcWithLocal;
+use PetrKnap\Persistence\ZonedDateTime\UtcWithTimezone;
 use PHPUnit\Framework\TestCase;
 
 final class ReadmeTest extends TestCase implements MarkdownFileTestInterface

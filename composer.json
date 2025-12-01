@@ -1,12 +1,12 @@
 {
   "autoload": {
     "psr-4": {
-      "PetrKnap\\ZonedDateTimePersistence\\": "src/main/php"
+      "PetrKnap\\Persistence\\ZonedDateTime\\": "src/main/php"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "PetrKnap\\ZonedDateTimePersistence\\": "src/test/php"
+      "PetrKnap\\Persistence\\ZonedDateTime\\": "src/test/php"
     }
   },
   "config": {

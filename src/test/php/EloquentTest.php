@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace PetrKnap\ZonedDateTimePersistence;
+namespace PetrKnap\Persistence\ZonedDateTime;
 
 use Illuminate\Database\Capsule\Manager;
 use Illuminate\Database\Connection;

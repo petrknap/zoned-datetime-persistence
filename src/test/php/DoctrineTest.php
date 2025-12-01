@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace PetrKnap\ZonedDateTimePersistence;
+namespace PetrKnap\Persistence\ZonedDateTime;
 
 use Doctrine\DBAL\DriverManager;
 use Doctrine\DBAL\Types\Type;

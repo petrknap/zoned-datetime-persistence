@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace PetrKnap\ZonedDateTimePersistence\JavaSe8;
+namespace PetrKnap\Persistence\ZonedDateTime\JavaSe8;
 
 use DateTime;
-use PetrKnap\ZonedDateTimePersistence\TestCase;
+use PetrKnap\Persistence\ZonedDateTime\TestCase;
 
 final class TimeTest extends TestCase
 {

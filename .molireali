@@ -1,5 +1,5 @@
 authors
-composer PetrKnap\\ZonedDateTimePersistence
+composer PetrKnap\\Persistence\\ZonedDateTime
 dockerfile php 8.2-cli
 docker-scripts petrknap/zoned-datetime-persistence
 donation

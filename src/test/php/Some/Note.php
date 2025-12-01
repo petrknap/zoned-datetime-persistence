@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace PetrKnap\ZonedDateTimePersistence\Some;
+namespace PetrKnap\Persistence\ZonedDateTime\Some;
 
 use DateTimeImmutable;
 use DateTimeInterface;
 use DateTimeZone;
 use Doctrine\ORM\Mapping as ORM;
-use PetrKnap\ZonedDateTimePersistence\UtcWithLocal;
-use PetrKnap\ZonedDateTimePersistence\UtcWithSystemTimezone;
-use PetrKnap\ZonedDateTimePersistence\UtcWithTimezone;
-use PetrKnap\ZonedDateTimePersistence\UtcDateTimeType;
+use PetrKnap\Persistence\ZonedDateTime\UtcWithLocal;
+use PetrKnap\Persistence\ZonedDateTime\UtcWithSystemTimezone;
+use PetrKnap\Persistence\ZonedDateTime\UtcWithTimezone;
+use PetrKnap\Persistence\ZonedDateTime\UtcDateTimeType;
 
 #[ORM\Entity]
 #[ORM\HasLifecycleCallbacks]

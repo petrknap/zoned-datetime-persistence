@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace PetrKnap\ZonedDateTimePersistence\JavaSe8;
+namespace PetrKnap\Persistence\ZonedDateTime\JavaSe8;
 
 use DateTimeImmutable;
 use DateTimeInterface;
