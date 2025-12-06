@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace PetrKnap\ZonedDateTimePersistence;
+namespace PetrKnap\Persistence\ZonedDateTime;
 
 final class ZonedDateTimePersistenceTest extends TestCase
 {

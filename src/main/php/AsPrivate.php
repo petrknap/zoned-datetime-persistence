@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace PetrKnap\ZonedDateTimePersistence;
+namespace PetrKnap\Persistence\ZonedDateTime;
 
 use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
 use Illuminate\Database\Eloquent\Model;

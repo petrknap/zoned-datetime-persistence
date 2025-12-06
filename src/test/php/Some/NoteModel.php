@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace PetrKnap\ZonedDateTimePersistence\Some;
+namespace PetrKnap\Persistence\ZonedDateTime\Some;
 
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
-use PetrKnap\ZonedDateTimePersistence\AsPrivate;
-use PetrKnap\ZonedDateTimePersistence\AsUtc;
+use PetrKnap\Persistence\ZonedDateTime\AsPrivate;
+use PetrKnap\Persistence\ZonedDateTime\AsUtc;
 
 /**
  * @property string $content

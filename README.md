@@ -39,7 +39,7 @@ the **Eloquent** (see [`NoteModel.php`](./src/test/php/Some/NoteModel.php) and [
 and, of course, it **can be integrated manually** into any project, giving you full flexibility to adapt it to your specific needs.
 
 ```php
-namespace PetrKnap\ZonedDateTimePersistence;
+namespace PetrKnap\Persistence\ZonedDateTime;
 
 $em = DoctrineTest::prepareEntityManager();
 
@@ -92,7 +92,7 @@ If you want to **preserve the original timezone as is**, you cannot use [`UtcWit
 In this case, you need to use this implementation.
 
 ```php
-namespace PetrKnap\ZonedDateTimePersistence;
+namespace PetrKnap\Persistence\ZonedDateTime;
 
 $now = (new \DateTime('2025-03-30 01:45', new \DateTimeZone('Europe/Prague')));
 
