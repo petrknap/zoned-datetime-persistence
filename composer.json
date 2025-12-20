@@ -14,8 +14,11 @@
     "sort-packages": true
   },
   "conflict": {
+    "doctrine/dbal": "<3|>=4",
     "doctrine/orm": "<3|>=4",
-    "illuminate/database": "<12|>=13"
+    "illuminate/contracts": "<11|>=13",
+    "illuminate/database": "<11|>=13",
+    "illuminate/support": "<11|>=13"
   },
   "description": "Timezone aware date-time persistence",
   "funding": [
@@ -47,10 +50,13 @@
     "php": ">=8.2"
   },
   "require-dev": {
+    "doctrine/dbal": "*",
     "doctrine/orm": "*",
+    "illuminate/contracts": "*",
     "illuminate/database": "*",
+    "illuminate/support": "*",
     "nunomaduro/phpinsights": "^2.11",
-    "petrknap/shorts": "^3.0",
+    "petrknap/shorts": "^3.2",
     "phpstan/phpstan": "^1.12",
     "phpunit/phpunit": "^10.5",
     "squizlabs/php_codesniffer": "^3.7"
@@ -76,5 +82,12 @@
       "@check-requirements",
       "@test-implementation"
     ]
+  },
+  "suggest": {
+    "doctrine/dbal": "Required by Doctrine part",
+    "doctrine/orm": "Required by Doctrine part",
+    "illuminate/contracts": "Required by Eloquent part",
+    "illuminate/database": "Required by Eloquent part",
+    "illuminate/support": "Required by Eloquent part"
   }
 }

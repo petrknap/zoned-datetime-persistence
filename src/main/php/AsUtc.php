@@ -7,6 +7,7 @@ namespace PetrKnap\Persistence\ZonedDateTime;
 use DateTimeInterface;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Support\Carbon;
+use PetrKnap\Eloquent\Casts\AsPrivate;
 
 /**
  * Eloquent factory

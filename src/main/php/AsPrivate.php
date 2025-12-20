@@ -9,7 +9,9 @@ use Illuminate\Database\Eloquent\Model;
 use LogicException;
 
 /**
- * @todo move it to separated package
+ * @todo BC remove it
+ *
+ * @deprecated use {@see \PetrKnap\Eloquent\Casts\AsPrivate}
  *
  * @implements CastsAttributes<null, mixed>
  */
