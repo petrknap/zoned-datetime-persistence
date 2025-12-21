@@ -14,7 +14,7 @@
     "sort-packages": true
   },
   "conflict": {
-    "doctrine/dbal": "<3|>=4",
+    "doctrine/dbal": "<3|>=5",
     "doctrine/orm": "<3|>=4",
     "illuminate/contracts": "<11|>=13",
     "illuminate/database": "<11|>=13",

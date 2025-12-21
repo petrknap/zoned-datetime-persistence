@@ -10,6 +10,7 @@ use DateTimeZone;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types\ConversionException;
 use Doctrine\DBAL\Types\DateTimeImmutableType;
+use Doctrine\DBAL\Types\Exception\InvalidType;
 
 /**
  * Converts zoned date-time into UTC date-time
@@ -21,9 +22,21 @@ final class UtcDateTimeType extends DateTimeImmutableType
     public function convertToDatabaseValue($value, AbstractPlatform $platform): string|null
     {
         if ($value !== null && !($value instanceof DateTimeInterface)) {
-            throw ConversionException::conversionFailedInvalidType(
+            /**
+             * @todo remove following fallback for DBAL 3
+             *
+             * @phpstan-ignore-next-line
+             */
+            if (!method_exists(InvalidType::class, 'new')) {
+                throw ConversionException::conversionFailedInvalidType(
+                    $value,
+                    self::NAME,
+                    ['null', DateTimeInterface::class],
+                );
+            }
+            throw InvalidType::new(
                 $value,
-                $this->getName(),
+                self::NAME,
                 ['null', DateTimeInterface::class],
             );
         }
