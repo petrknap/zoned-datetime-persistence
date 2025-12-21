@@ -22,7 +22,7 @@ abstract class Utc
      * @var LocalDateTime|null
      */
     #[ORM\Column(type: 'datetime_immutable', nullable: true)]
-    protected readonly DateTimeImmutable|null $utc;
+    protected DateTimeImmutable|null $utc;
 
     protected function __construct(DateTimeInterface $zonedDateTime)
     {

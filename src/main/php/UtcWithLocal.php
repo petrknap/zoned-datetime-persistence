@@ -20,7 +20,7 @@ final class UtcWithLocal extends Utc
      * @var LocalDateTime|null
      */
     #[ORM\Column(type: 'datetime_immutable', nullable: true)]
-    protected readonly DateTimeImmutable|null $local;
+    protected DateTimeImmutable|null $local;
 
     public function __construct(DateTimeInterface $zonedDateTime)
     {
