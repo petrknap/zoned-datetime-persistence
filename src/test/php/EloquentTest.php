@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace PetrKnap\Persistence\ZonedDateTime;
 
 use Illuminate\Database\Capsule\Manager;
-use Illuminate\Database\Connection;
 use Illuminate\Support\Carbon;
 use LogicException;
 use PDO;
+use PetrKnap\Shorts\Testing\IlluminateDatabase;
 
 final class EloquentTest extends TestCase
 {
@@ -19,22 +19,18 @@ final class EloquentTest extends TestCase
             ->getConnection()
             ->getNativeConnection();
 
-        $manager = new Manager();
-        $manager->addConnection([]);
-        $manager->getDatabaseManager()
-            ->extend('default', static fn (): Connection => new Connection($pdo));
-        $manager->setAsGlobal();
-        $manager->bootEloquent();
-
-        return $manager;
+        return IlluminateDatabase::createCapsuleManager($pdo);
     }
 
     public function test_loads_saved_model(): void
     {
-        self::prepareManager();
+        self::prepareManager()->bootEloquent();
 
+        /** @var Carbon $localDateTime */
         $localDateTime = Carbon::createFromInterface($this->localDateTime);
+        /** @var Carbon $utcDateTime */
         $utcDateTime = Carbon::createFromInterface($this->utcDateTime);
+        /** @var Carbon $zonedDateTime */
         $zonedDateTime = Carbon::createFromInterface($this->zonedDateTime);
         $noteDateFormat = (new Some\NoteModel())->getDateFormat();
 
@@ -69,6 +65,7 @@ final class EloquentTest extends TestCase
             // Case: casted nullable
             ->whereNull('deleted_at_utc')
             // ---------------------------------------------------------------------------------------------------------
+            ->get()
             ->firstOrFail();
 
         // -------------------------------------------------------------------------------------------------------------
@@ -142,17 +139,20 @@ final class EloquentTest extends TestCase
         // -------------------------------------------------------------------------------------------------------------
     }
 
+    /**
+     * @todo remove it with {@see AsPrivate}
+     */
     public function test_private_cast(): void
     {
         $note = new Some\NoteModel();
 
         self::assertEquals(
-            $note->non_existend_atribute,
-            $note->created_at__local,
+            $note->non_existend_atribute, // @phpstan-ignore property.notFound
+            $note->created_at__local, // @phpstan-ignore property.notFound
         );
 
         self::expectException(LogicException::class);
-        $note->created_at__local = Carbon::now();
+        $note->created_at__local = Carbon::now(); // @phpstan-ignore property.notFound
     }
 
     public function test_utc_datetime_readonly_cast(): void
@@ -163,6 +163,6 @@ final class EloquentTest extends TestCase
         self::assertInstanceOf(Carbon::class, $note->created_at__utc);
 
         self::expectException(LogicException::class);
-        $note->created_at__utc = Carbon::now();
+        $note->created_at__utc = Carbon::now(); // @phpstan-ignore assign.propertyReadOnly
     }
 }

@@ -79,12 +79,12 @@ final class AsUtcDateTime implements CastsAttributes
                 $value = Carbon::createFromFormat(
                     $this->dateTimeFormat ?? $model->getDateFormat(),
                     $value,
-                    timezone: $this->utc,
+                    $this->utc,
                 );
             } catch (Throwable) {
                 $value = Carbon::parse(
                     $value,
-                    timezone: $this->utc,
+                    $this->utc,
                 );
             }
         }

@@ -6,7 +6,6 @@ namespace PetrKnap;
 
 use PetrKnap\Shorts\PhpUnit\MarkdownFileTestInterface;
 use PetrKnap\Shorts\PhpUnit\MarkdownFileTestTrait;
-use PetrKnap\Persistence\ZonedDateTime\UtcDateTimeType;
 use PetrKnap\Persistence\ZonedDateTime\UtcWithLocal;
 use PetrKnap\Persistence\ZonedDateTime\UtcWithTimezone;
 use PHPUnit\Framework\TestCase;
@@ -23,12 +22,8 @@ final class ReadmeTest extends TestCase implements MarkdownFileTestInterface
     public static function getExpectedOutputsOfPhpExamples(): iterable
     {
         return [
-            UtcWithLocal::class =>
-                '2025-10-26 02:45 GMT+0200: We still have summer time' . PHP_EOL .
-                '2025-10-26 02:15 GMT+0100: Now we have winter time' . PHP_EOL,
-            UtcWithTimezone::class =>
-                'UtcWithTimezone: 2025-03-30 03:45 CEST' . PHP_EOL .
-                'UtcWithLocal:    2025-03-30 02:45 GMT+0100' . PHP_EOL,
+            UtcWithLocal::class => self::OUTPUT_IN_MARKDOWN,
+            UtcWithTimezone::class => self::OUTPUT_IN_MARKDOWN,
         ];
     }
 }
