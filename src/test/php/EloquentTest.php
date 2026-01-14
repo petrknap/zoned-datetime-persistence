@@ -163,6 +163,39 @@ final class EloquentTest extends TestCase
         self::assertInstanceOf(Carbon::class, $note->created_at__utc);
 
         self::expectException(LogicException::class);
-        $note->created_at__utc = Carbon::now(); // @phpstan-ignore assign.propertyReadOnly
+        $note->created_at__utc = Carbon::now()->addSecond();
+    }
+
+    /**
+     * @todo find more "illuminated" fuckups
+     */
+    public function test_illuminate_resilience(): void
+    {
+        $dateTime = Carbon::createFromInterface($this->zonedDateTime);
+        $note = new Some\NoteModel();
+        $note->content = 'test';
+        $note->created_at_utc = $dateTime;
+        $note->created_at = $dateTime;
+        $note->created_at_2 = $dateTime;
+        $note->created_at_3 = $dateTime;
+
+        // -------------------------------------------------------------------------------------------------------------
+        // Case: Model::attributesToArray() ignores Model::$dateFormat
+        self::assertEquals([
+            'content' => 'test',
+            'created_at_utc' => '2025-10-25T14:05:00.000000Z',
+            'created_at__utc' => '2025-10-25T14:05:00.000000Z',
+            'created_at__local' => null,
+            'created_at_2__utc' => '2025-10-25T14:05:00.000000Z',
+            'created_at_2__timezone' => null,
+            'created_at_3__utc' => '2025-10-25T14:05:00.000000Z',
+        ], $note->attributesToArray());
+        // -------------------------------------------------------------------------------------------------------------
+        // Case: Model sometimes calls date-time setter with malformed value
+        $note->created_at_utc = 'yesterday';
+        // -------------------------------------------------------------------------------------------------------------
+        // Case: Model sometimes calls readonly setter with cached raw value
+        $note->created_at__utc = '2025-10-25 14:05:00';
+        // -------------------------------------------------------------------------------------------------------------
     }
 }

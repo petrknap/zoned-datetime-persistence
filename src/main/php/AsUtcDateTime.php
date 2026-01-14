@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace PetrKnap\Persistence\ZonedDateTime;
 
+use Carbon\Traits\Converter;
+use Illuminate\Database\Eloquent\Concerns\HasAttributes;
 use DateTimeInterface;
 use DateTimeZone;
 use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
@@ -53,8 +55,7 @@ final class AsUtcDateTime implements CastsAttributes
             throw new InvalidArgumentException('$value must be string or null');
         }
 
-        /** @var Carbon $localDateTime */
-        $localDateTime = Carbon::createFromFormat($this->dateTimeFormat ?? $model->getDateFormat(), $value);
+        $localDateTime = $this->carbonFromString($model, $value);
         $zonedDateTime = ZonedDateTimePersistence::computeZonedDateTime(
             $localDateTime,
             timezone: $this->utc,
@@ -66,31 +67,49 @@ final class AsUtcDateTime implements CastsAttributes
 
     public function set(Model $model, string $key, mixed $value, array $attributes): string|null
     {
-        if ($this->isReadonly) {
-            throw new LogicException(sprintf('%s::$%s is readonly', get_class($model), $key));
-        }
-
         if ($value === null) {
             return null;
         }
 
-        if (is_string($value)) { // Timezone information probably lost; treating value as UTC
+        $dateTime = match (is_string($value)) {
+            true => $this->carbonFromString($model, $value), // Timezone information probably lost
+            false => $value,
+        };
+
+        $formattedDateTime = ZonedDateTimePersistence::computeUtcDateTime($dateTime)
+            ->format($this->dateTimeFormat ?? $model->getDateFormat());
+
+        if ($this->isReadonly && $formattedDateTime !== $attributes[$key]) { // Eloquent sometimes calls setter with the original value
+            throw new LogicException(sprintf('%s::$%s is readonly', get_class($model), $key));
+        }
+
+        return $formattedDateTime;
+    }
+
+    /**
+     * @param string $value treated as UTC when timezone information is not present
+     *
+     * @note it contains fallback to {@see Carbon::parse()} due to {@see HasAttributes::attributesToArray()}->{@see HasAttributes::addDateAttributesToArray()}->{@see HasAttributes::serializeDate()}->{@see Converter::toJSON()} call
+     */
+    private function carbonFromString(Model $model, string $value): Carbon
+    {
+        try {
+            /** @var Carbon */
+            return Carbon::createFromFormat(
+                $this->dateTimeFormat ?? $model->getDateFormat(),
+                $value,
+                $this->utc,
+            );
+        } catch (Throwable $error) {
             try {
-                $value = Carbon::createFromFormat(
-                    $this->dateTimeFormat ?? $model->getDateFormat(),
+                /** @var Carbon */
+                return Carbon::parse(
                     $value,
                     $this->utc,
                 );
             } catch (Throwable) {
-                $value = Carbon::parse(
-                    $value,
-                    $this->utc,
-                );
+                throw $error;
             }
         }
-
-        /** @var DateTimeInterface $value */
-        return ZonedDateTimePersistence::computeUtcDateTime($value)
-            ->format($this->dateTimeFormat ?? $model->getDateFormat());
     }
 }
