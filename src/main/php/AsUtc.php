@@ -12,12 +12,8 @@ use PetrKnap\Eloquent\Casts\AsPrivate;
 /**
  * Eloquent factory
  */
-final class AsUtc
+abstract class AsUtc
 {
-    private function __construct()
-    {
-    }
-
     /**
      * @see AsUtcDateTime
      *
