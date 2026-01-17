@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace PetrKnap\Persistence\ZonedDateTime;
 
 use Carbon\Traits\Converter;
-use Illuminate\Database\Eloquent\Concerns\HasAttributes;
 use DateTimeInterface;
 use DateTimeZone;
 use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
+use Illuminate\Database\Eloquent\Concerns\HasAttributes;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 use InvalidArgumentException;
@@ -47,6 +47,8 @@ final class AsUtcDateTime implements CastsAttributes
 
     public function get(Model $model, string $key, mixed $value, array $attributes): Carbon|null
     {
+        $this->illuminateResilience($model, $key);
+
         if ($value === null) {
             return null;
         }
@@ -67,6 +69,8 @@ final class AsUtcDateTime implements CastsAttributes
 
     public function set(Model $model, string $key, mixed $value, array $attributes): string|null
     {
+        $this->illuminateResilience($model, $key);
+
         if ($value === null) {
             return null;
         }
@@ -79,7 +83,7 @@ final class AsUtcDateTime implements CastsAttributes
         $formattedDateTime = ZonedDateTimePersistence::computeUtcDateTime($dateTime)
             ->format($this->dateTimeFormat ?? $model->getDateFormat());
 
-        if ($this->isReadonly && $formattedDateTime !== $attributes[$key]) { // Eloquent sometimes calls setter with the original value
+        if ($this->isReadonly && $formattedDateTime !== $attributes[$key]) { // Eloquent sometimes calls setter with cached value
             throw new LogicException(sprintf('%s::$%s is readonly', get_class($model), $key));
         }
 
@@ -89,7 +93,7 @@ final class AsUtcDateTime implements CastsAttributes
     /**
      * @param string $value treated as UTC when timezone information is not present
      *
-     * @note it contains fallback to {@see Carbon::parse()} due to {@see HasAttributes::attributesToArray()}->{@see HasAttributes::addDateAttributesToArray()}->{@see HasAttributes::serializeDate()}->{@see Converter::toJSON()} call
+     * @note it contains fallback to {@see Carbon::parse()} due to {@see HasAttributes::serializeDate()}->{@see Converter::toJSON()} call
      */
     private function carbonFromString(Model $model, string $value): Carbon
     {
@@ -110,6 +114,22 @@ final class AsUtcDateTime implements CastsAttributes
             } catch (Throwable) {
                 throw $error;
             }
+        }
+    }
+
+    /**
+     * Warns about known "Illuminated" issues
+     */
+    private function illuminateResilience(Model $model, string $key): void
+    {
+        if (in_array($key, $model->getDates(), strict: true)) {
+            user_error(sprintf(
+                '%s::$%s is registered as date, do not cast it twice; use %s::withUtc() or %s::withSystemTimezone() instead',
+                get_class($model),
+                $key,
+                AsUtc::class,
+                AsUtc::class,
+            ), E_USER_WARNING);
         }
     }
 }

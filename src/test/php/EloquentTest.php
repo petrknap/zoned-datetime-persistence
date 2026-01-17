@@ -59,10 +59,10 @@ final class EloquentTest extends TestCase
             ->whereNull('deleted_at__utc')
             ->whereNull('deleted_at__local')
             // ---------------------------------------------------------------------------------------------------------
-            // Case: UTC date-time cast
+            // Case: Eloquent timestamp
             ->where('created_at_utc', '=', $utcDateTime->format($noteDateFormat))
             // ---------------------------------------------------------------------------------------------------------
-            // Case: casted nullable
+            // Case: UTC date-time cast
             ->whereNull('deleted_at_utc')
             // ---------------------------------------------------------------------------------------------------------
             ->get()
@@ -115,7 +115,7 @@ final class EloquentTest extends TestCase
             'Unexpected createdNote.deleted_at',
         );
         // -------------------------------------------------------------------------------------------------------------
-        // Case: UTC date-time cast
+        // Case: Eloquent timestamp
         self::assertDateTimeEquals(
             $utcDateTime,
             $createdNote->created_at_utc,
@@ -127,7 +127,7 @@ final class EloquentTest extends TestCase
             'Unexpected loadedNote.created_at_utc',
         );
         // -------------------------------------------------------------------------------------------------------------
-        // Case: casted nullable
+        // Case: UTC date-time cast
         self::assertNull(
             $createdNote->deleted_at_utc,
             'Unexpected createdNote.deleted_at_utc',
@@ -158,31 +158,47 @@ final class EloquentTest extends TestCase
     public function test_utc_datetime_readonly_cast(): void
     {
         $note = new Some\NoteModel();
-        $note->created_at = Carbon::now();
+        $note->deleted_at = Carbon::now();
 
-        self::assertInstanceOf(Carbon::class, $note->created_at__utc);
+        self::assertInstanceOf(Carbon::class, $note->deleted_at__utc);
 
         self::expectException(LogicException::class);
-        $note->created_at__utc = Carbon::now()->addSecond();
+        $note->deleted_at__utc = Carbon::now()->addSecond();
     }
 
     /**
-     * @todo find more "illuminated" fuckups
+     * @todo find more "illuminated" issues
      */
     public function test_illuminate_resilience(): void
     {
+        self::prepareManager()->bootEloquent();
+
         $dateTime = Carbon::createFromInterface($this->zonedDateTime);
         $note = new Some\NoteModel();
-        $note->content = 'test';
         $note->created_at_utc = $dateTime;
         $note->created_at = $dateTime;
         $note->created_at_2 = $dateTime;
         $note->created_at_3 = $dateTime;
 
         // -------------------------------------------------------------------------------------------------------------
+        // Case: Model::save() sets timezone aware strings to timestamps
+        $newNote = new Some\NoteModel();
+        $newNote->content = 'test';
+        $newNote->save();
+        $newNote->refresh();
+        self::assertLessThanOrEqual(5, abs(
+            Carbon::now()->getTimestamp() - $newNote->created_at_utc->getTimestamp(),
+        ));
+        // -------------------------------------------------------------------------------------------------------------
+        // Case: Attributes are mutable after load
+        $newNote->created_at = $dateTime;
+        $newNote->save();
+        $newNote->refresh();
+        $newNote->created_at->addSecond();
+        self::assertEquals(1, $newNote->created_at->getTimestamp() - $dateTime->getTimestamp());
+        // -------------------------------------------------------------------------------------------------------------
         // Case: Model::attributesToArray() ignores Model::$dateFormat
         self::assertEquals([
-            'content' => 'test',
             'created_at_utc' => '2025-10-25T14:05:00.000000Z',
             'created_at__utc' => '2025-10-25T14:05:00.000000Z',
             'created_at__local' => null,
@@ -191,11 +207,12 @@ final class EloquentTest extends TestCase
             'created_at_3__utc' => '2025-10-25T14:05:00.000000Z',
         ], $note->attributesToArray());
         // -------------------------------------------------------------------------------------------------------------
-        // Case: Model sometimes calls date-time setter with malformed value
-        $note->created_at_utc = 'yesterday';
+        // Case: Model sometimes calls cast-setter with malformed value
+        $note->deleted_at_utc = '2025-10-25T14:05:00.000000Z';
         // -------------------------------------------------------------------------------------------------------------
-        // Case: Model sometimes calls readonly setter with cached raw value
+        // Case: Model sometimes calls readonly cast-setter with cached value
         $note->created_at__utc = '2025-10-25 14:05:00';
+        $note->created_at__utc = '2025-10-25T14:05:00.000000Z';
         // -------------------------------------------------------------------------------------------------------------
     }
 }

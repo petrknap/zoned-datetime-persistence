@@ -31,6 +31,17 @@ final class NoteModel extends Model
     protected $table = 'notes';
 
     /**
+     * Example: Eloquent timestamp
+     */
+    protected function createdAtUtc(): Attribute
+    {
+        return AsUtc::withUtc(
+            'created_at_utc',
+            $this->getDateFormat(),
+        );
+    }
+
+    /**
      * Example: UTC date-time with local date-time
      */
     protected function createdAt(): Attribute
@@ -88,8 +99,6 @@ final class NoteModel extends Model
             'deleted_at__utc' => AsUtc::dateTime(readonly: true),
             'deleted_at__local' => AsPrivate::class,
             // Example: UTC date-time cast
-            'created_at_utc' => AsUtc::dateTime(),
-            // Example: casted nullable
             'deleted_at_utc' => AsUtc::dateTime(),
         ];
     }
