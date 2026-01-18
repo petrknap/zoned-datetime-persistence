@@ -15,6 +15,16 @@ use PetrKnap\Eloquent\Casts\AsPrivate;
 abstract class AsUtc
 {
     /**
+     * @var array<callable&array{class-string<self>, non-empty-string}>
+     *
+     * @note these methods must generate {@see Attribute::$set} which supports string value because Eloquent sometimes calls setter with cached value
+     */
+    public const CAST_ALTERNATIVES = [
+        [self::class, 'withFixedTimezone'],
+        [self::class, 'withSystemTimezone'],
+    ];
+
+    /**
      * @see AsUtcDateTime
      *
      * @return string cast
@@ -56,7 +66,34 @@ abstract class AsUtc
 
     /**
      * @note you can cast used attribute as readonly {@see AsUtc::dateTime()} or {@see AsPrivate}
-     * @note the set method supports string $value as it serves as an alternative to {@see AsUtcDateTime}
+     *
+     * @see UtcWithTimezone
+     */
+    public static function withFixedTimezone(
+        string $utcDateTimeAttributeName,
+        string $dateTimeFormat,
+        string $timezone,
+    ): Attribute {
+        return Attribute::make(
+            get: static fn (mixed $_, array $attributes): Carbon|null => self::toNullableCarbon(
+                UtcWithTimezone::fromFormattedValues(
+                    utcDateTime: $attributes[$utcDateTimeAttributeName] ?? null,
+                    dateTimeFormat: $dateTimeFormat,
+                    timezone: $timezone,
+                )?->toZonedDateTime(),
+            ),
+            set: static function (DateTimeInterface|string|null $value) use ($utcDateTimeAttributeName, $dateTimeFormat): array {
+                return [
+                    $utcDateTimeAttributeName => $value instanceof DateTimeInterface
+                        ? (new UtcWithTimezone($value))->getUtcDateTime(format: $dateTimeFormat)
+                        : $value,
+                ];
+            },
+        );
+    }
+
+    /**
+     * @note you can cast used attribute as readonly {@see AsUtc::dateTime()} or {@see AsPrivate}
      *
      * @see UtcWithSystemTimezone
      */
@@ -110,30 +147,15 @@ abstract class AsUtc
     }
 
     /**
-     * @note the set method supports string $value as it serves as an alternative to {@see AsUtcDateTime}
+     * @todo BC remove it
      *
-     * @see UtcWithTimezone
+     * @deprecated use {@see self::withFixedTimezone()}
      */
     public static function withUtc(
         string $utcDateTimeAttributeName,
         string $dateTimeFormat,
     ): Attribute {
-        return Attribute::make(
-            get: static fn (mixed $_, array $attributes): Carbon|null => self::toNullableCarbon(
-                UtcWithTimezone::fromFormattedValues(
-                    utcDateTime: $attributes[$utcDateTimeAttributeName] ?? null,
-                    dateTimeFormat: $dateTimeFormat,
-                    timezone: 'UTC',
-                )?->toZonedDateTime(),
-            ),
-            set: static function (DateTimeInterface|string|null $value) use ($utcDateTimeAttributeName, $dateTimeFormat): array {
-                return [
-                    $utcDateTimeAttributeName => $value instanceof DateTimeInterface
-                        ? (new UtcWithTimezone($value))->getUtcDateTime(format: $dateTimeFormat)
-                        : $value,
-                ];
-            },
-        );
+        return self::withFixedTimezone($utcDateTimeAttributeName, $dateTimeFormat, 'UTC');
     }
 
     private static function toNullableCarbon(DateTimeInterface|null $dateTime): Carbon|null

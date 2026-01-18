@@ -124,11 +124,13 @@ final class AsUtcDateTime implements CastsAttributes
     {
         if (in_array($key, $model->getDates(), strict: true)) {
             user_error(sprintf(
-                '%s::$%s is registered as date, do not cast it twice; use %s::withUtc() or %s::withSystemTimezone() instead',
+                '%s::$%s is registered as date, do not cast it twice; use %s instead',
                 get_class($model),
                 $key,
-                AsUtc::class,
-                AsUtc::class,
+                implode(' / ', array_map(
+                    static fn (array $factory): string => implode('::', $factory),
+                    AsUtc::CAST_ALTERNATIVES,
+                )),
             ), E_USER_WARNING);
         }
     }

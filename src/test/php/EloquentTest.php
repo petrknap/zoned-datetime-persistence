@@ -59,7 +59,7 @@ final class EloquentTest extends TestCase
             ->whereNull('deleted_at__utc')
             ->whereNull('deleted_at__local')
             // ---------------------------------------------------------------------------------------------------------
-            // Case: Eloquent timestamp
+            // Case: Eloquent timestamp attribute
             ->where('created_at_utc', '=', $utcDateTime->format($noteDateFormat))
             // ---------------------------------------------------------------------------------------------------------
             // Case: UTC date-time cast
@@ -115,7 +115,7 @@ final class EloquentTest extends TestCase
             'Unexpected createdNote.deleted_at',
         );
         // -------------------------------------------------------------------------------------------------------------
-        // Case: Eloquent timestamp
+        // Case: Eloquent timestamp attribute
         self::assertDateTimeEquals(
             $utcDateTime,
             $createdNote->created_at_utc,
