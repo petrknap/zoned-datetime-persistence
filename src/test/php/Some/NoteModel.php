@@ -31,13 +31,14 @@ final class NoteModel extends Model
     protected $table = 'notes';
 
     /**
-     * Example: Eloquent timestamp
+     * Example: Eloquent timestamp attribute
      */
     protected function createdAtUtc(): Attribute
     {
-        return AsUtc::withUtc(
+        return AsUtc::withFixedTimezone(
             'created_at_utc',
             $this->getDateFormat(),
+            'UTC',
         );
     }
 
