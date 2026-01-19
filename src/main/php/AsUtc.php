@@ -17,14 +17,9 @@ abstract class AsUtc
     /**
      * @internal
      *
-     * @var array<callable&array{class-string<self>, non-empty-string}>
-     *
-     * @note these methods must generate {@see Attribute::$set} which calls {@see AsUtcDateTime::normalizeValue()}
+     * @var callable generates {@see Attribute::$set} which calls {@see AsUtcDateTime::normalizeValue()} with {@see Carbon::$timezone} as fallback timezone
      */
-    public const CAST_ALTERNATIVES = [
-        [self::class, 'withFixedTimezone'],
-        [self::class, 'withSystemTimezone'],
-    ];
+    public const CAST_ALTERNATIVE = [self::class, 'withSystemTimezone'];
 
     /**
      * @see AsUtcDateTime
@@ -67,6 +62,10 @@ abstract class AsUtc
     }
 
     /**
+     * @todo BC remove it
+     *
+     * @deprecated use {@see self::withSystemTimezone()}
+     *
      * @note you can cast used attribute as readonly {@see AsUtc::dateTime()} or {@see AsPrivate}
      *
      * @see UtcWithTimezone

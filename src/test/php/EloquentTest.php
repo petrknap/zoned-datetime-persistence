@@ -122,7 +122,7 @@ final class EloquentTest extends TestCase
             'Unexpected createdNote.created_at_utc',
         );
         self::assertDateTimeEquals(
-            $utcDateTime,
+            $zonedDateTime,
             $loadedNote->created_at_utc,
             'Unexpected loadedNote.created_at_utc',
         );
