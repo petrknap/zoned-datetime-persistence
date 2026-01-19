@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace PetrKnap\Persistence\ZonedDateTime;
 
+use Carbon\Exceptions\InvalidFormatException;
 use Carbon\Traits\Converter;
 use DateTimeInterface;
 use DateTimeZone;
@@ -57,7 +58,7 @@ final class AsUtcDateTime implements CastsAttributes
             throw new InvalidArgumentException('$value must be string or null');
         }
 
-        $localDateTime = $this->carbonFromString($model, $value);
+        $localDateTime = self::normalizeValue($value, $this->dateTimeFormat ?? $model->getDateFormat(), $this->utc);
         $zonedDateTime = ZonedDateTimePersistence::computeZonedDateTime(
             $localDateTime,
             timezone: $this->utc,
@@ -75,10 +76,11 @@ final class AsUtcDateTime implements CastsAttributes
             return null;
         }
 
-        $dateTime = match (is_string($value)) {
-            true => $this->carbonFromString($model, $value), // Timezone information probably lost
-            false => $value,
-        };
+        $dateTime = self::normalizeValue(
+            $value,
+            $this->dateTimeFormat ?? $model->getDateFormat(),
+            $this->utc, // Timezone information probably lost; treated as UTC when timezone information is not present
+        );
 
         $formattedDateTime = ZonedDateTimePersistence::computeUtcDateTime($dateTime)
             ->format($this->dateTimeFormat ?? $model->getDateFormat());
@@ -91,28 +93,29 @@ final class AsUtcDateTime implements CastsAttributes
     }
 
     /**
-     * @param string $value treated as UTC when timezone information is not present
+     * @internal
+     *
+     * @return ($value is null ? null : DateTimeInterface)
      *
      * @note it contains fallback to {@see Carbon::parse()} due to {@see HasAttributes::serializeDate()}->{@see Converter::toJSON()} call
      */
-    private function carbonFromString(Model $model, string $value): Carbon
-    {
+    public static function normalizeValue(
+        DateTimeInterface|string|null $value,
+        string $dateTimeFormat,
+        DateTimeZone|string $timezone,
+    ): DateTimeInterface|null {
+        if ($value === null || $value instanceof DateTimeInterface) {
+            return $value;
+        }
         try {
             /** @var Carbon */
-            return Carbon::createFromFormat(
-                $this->dateTimeFormat ?? $model->getDateFormat(),
-                $value,
-                $this->utc,
-            );
-        } catch (Throwable $error) {
+            return Carbon::createFromFormat($dateTimeFormat, $value, $timezone);
+        } catch (InvalidFormatException $invalidFormatException) { // @phpstan-ignore catch.neverThrown
             try {
                 /** @var Carbon */
-                return Carbon::parse(
-                    $value,
-                    $this->utc,
-                );
+                return Carbon::parse($value, $timezone);
             } catch (Throwable) {
-                throw $error;
+                throw $invalidFormatException;
             }
         }
     }
