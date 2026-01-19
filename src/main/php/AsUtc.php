@@ -146,18 +146,6 @@ abstract class AsUtc
         );
     }
 
-    /**
-     * @todo BC remove it
-     *
-     * @deprecated use {@see self::withFixedTimezone()}
-     */
-    public static function withUtc(
-        string $utcDateTimeAttributeName,
-        string $dateTimeFormat,
-    ): Attribute {
-        return self::withFixedTimezone($utcDateTimeAttributeName, $dateTimeFormat, 'UTC');
-    }
-
     private static function toNullableCarbon(DateTimeInterface|null $dateTime): Carbon|null
     {
         /** @var Carbon|null */
