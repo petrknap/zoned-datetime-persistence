@@ -15,9 +15,11 @@ use PetrKnap\Eloquent\Casts\AsPrivate;
 abstract class AsUtc
 {
     /**
+     * @internal
+     *
      * @var array<callable&array{class-string<self>, non-empty-string}>
      *
-     * @note these methods must generate {@see Attribute::$set} which supports string value because Eloquent sometimes calls setter with cached value
+     * @note these methods must generate {@see Attribute::$set} which calls {@see AsUtcDateTime::normalizeValue()}
      */
     public const CAST_ALTERNATIVES = [
         [self::class, 'withFixedTimezone'],
@@ -82,7 +84,8 @@ abstract class AsUtc
                     timezone: $timezone,
                 )?->toZonedDateTime(),
             ),
-            set: static function (DateTimeInterface|string|null $value) use ($utcDateTimeAttributeName, $dateTimeFormat): array {
+            set: static function (DateTimeInterface|string|null $value) use ($utcDateTimeAttributeName, $dateTimeFormat, $timezone): array {
+                $value = AsUtcDateTime::normalizeValue($value, $dateTimeFormat, $timezone);
                 return [
                     $utcDateTimeAttributeName => $value instanceof DateTimeInterface
                         ? (new UtcWithTimezone($value))->getUtcDateTime(format: $dateTimeFormat)
@@ -109,6 +112,7 @@ abstract class AsUtc
                 )?->toZonedDateTime(),
             ),
             set: static function (DateTimeInterface|string|null $value) use ($utcDateTimeAttributeName, $dateTimeFormat): array {
+                $value = AsUtcDateTime::normalizeValue($value, $dateTimeFormat, Carbon::now()->getTimezone());
                 return [
                     $utcDateTimeAttributeName => $value instanceof DateTimeInterface
                         ? (new UtcWithSystemTimezone($value))->getUtcDateTime(format: $dateTimeFormat)
