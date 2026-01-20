@@ -62,39 +62,6 @@ abstract class AsUtc
     }
 
     /**
-     * @todo BC remove it
-     *
-     * @deprecated use {@see self::withSystemTimezone()}
-     *
-     * @note you can cast used attribute as readonly {@see AsUtc::dateTime()} or {@see AsPrivate}
-     *
-     * @see UtcWithTimezone
-     */
-    public static function withFixedTimezone(
-        string $utcDateTimeAttributeName,
-        string $dateTimeFormat,
-        string $timezone,
-    ): Attribute {
-        return Attribute::make(
-            get: static fn (mixed $_, array $attributes): Carbon|null => self::toNullableCarbon(
-                UtcWithTimezone::fromFormattedValues(
-                    utcDateTime: $attributes[$utcDateTimeAttributeName] ?? null,
-                    dateTimeFormat: $dateTimeFormat,
-                    timezone: $timezone,
-                )?->toZonedDateTime(),
-            ),
-            set: static function (DateTimeInterface|string|null $value) use ($utcDateTimeAttributeName, $dateTimeFormat, $timezone): array {
-                $value = AsUtcDateTime::normalizeValue($value, $dateTimeFormat, $timezone);
-                return [
-                    $utcDateTimeAttributeName => $value instanceof DateTimeInterface
-                        ? (new UtcWithTimezone($value))->getUtcDateTime(format: $dateTimeFormat)
-                        : $value,
-                ];
-            },
-        );
-    }
-
-    /**
      * @note you can cast used attribute as readonly {@see AsUtc::dateTime()} or {@see AsPrivate}
      *
      * @see UtcWithSystemTimezone
