@@ -102,18 +102,18 @@ final class AsUtcDateTime implements CastsAttributes
     public static function normalizeValue(
         DateTimeInterface|string|null $value,
         string $dateTimeFormat,
-        DateTimeZone|string $timezone,
+        DateTimeZone|string $fallbackTimezone,
     ): DateTimeInterface|null {
         if ($value === null || $value instanceof DateTimeInterface) {
             return $value;
         }
         try {
             /** @var Carbon */
-            return Carbon::createFromFormat($dateTimeFormat, $value, $timezone);
+            return Carbon::createFromFormat($dateTimeFormat, $value, $fallbackTimezone);
         } catch (InvalidFormatException $invalidFormatException) { // @phpstan-ignore catch.neverThrown
             try {
                 /** @var Carbon */
-                return Carbon::parse($value, $timezone);
+                return Carbon::parse($value, $fallbackTimezone);
             } catch (Throwable) {
                 throw $invalidFormatException;
             }
@@ -130,10 +130,7 @@ final class AsUtcDateTime implements CastsAttributes
                 '%s::$%s is registered as date, do not cast it twice; use %s instead',
                 get_class($model),
                 $key,
-                implode(' / ', array_map(
-                    static fn (array $factory): string => implode('::', $factory),
-                    AsUtc::CAST_ALTERNATIVES,
-                )),
+                implode('::', AsUtc::CAST_ALTERNATIVE),
             ), E_USER_WARNING);
         }
     }

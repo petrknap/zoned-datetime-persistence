@@ -35,10 +35,9 @@ final class NoteModel extends Model
      */
     protected function createdAtUtc(): Attribute
     {
-        return AsUtc::withFixedTimezone(
+        return AsUtc::withSystemTimezone(
             'created_at_utc',
             $this->getDateFormat(),
-            'UTC',
         );
     }
 
