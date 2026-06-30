@@ -16,9 +16,9 @@
   "conflict": {
     "doctrine/dbal": "<3|>=5",
     "doctrine/orm": "<3|>=4",
-    "illuminate/contracts": "<11|>=13",
-    "illuminate/database": "<11|>=13",
-    "illuminate/support": "<11|>=13"
+    "illuminate/contracts": "<11|>=14",
+    "illuminate/database": "<11|>=14",
+    "illuminate/support": "<11|>=14"
   },
   "description": "Timezone aware date-time persistence",
   "funding": [
