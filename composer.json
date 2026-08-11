@@ -88,6 +88,7 @@
     "doctrine/orm": "Required by Doctrine part",
     "illuminate/contracts": "Required by Eloquent part",
     "illuminate/database": "Required by Eloquent part",
-    "illuminate/support": "Required by Eloquent part"
+    "illuminate/support": "Required by Eloquent part",
+    "petrknap/eloquent": "Contains more helpers for Eloquent"
   }
 }

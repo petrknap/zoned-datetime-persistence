@@ -139,22 +139,6 @@ final class EloquentTest extends TestCase
         // -------------------------------------------------------------------------------------------------------------
     }
 
-    /**
-     * @todo remove it with {@see AsPrivate}
-     */
-    public function test_private_cast(): void
-    {
-        $note = new Some\NoteModel();
-
-        self::assertEquals(
-            $note->non_existend_atribute, // @phpstan-ignore property.notFound
-            $note->created_at__local, // @phpstan-ignore property.notFound
-        );
-
-        self::expectException(LogicException::class);
-        $note->created_at__local = Carbon::now(); // @phpstan-ignore property.notFound
-    }
-
     public function test_utc_datetime_readonly_cast(): void
     {
         $note = new Some\NoteModel();
@@ -197,14 +181,14 @@ final class EloquentTest extends TestCase
         $newNote->created_at->addSecond();
         self::assertEquals(1, $newNote->created_at->getTimestamp() - $dateTime->getTimestamp());
         // -------------------------------------------------------------------------------------------------------------
-        // Case: Model::attributesToArray() ignores Model::$dateFormat
+        // Case: Model::attributesToArray() sometimes ignores Model::$dateFormat
         self::assertEquals([
             'created_at_utc' => '2025-10-25T14:05:00.000000Z',
-            'created_at__utc' => '2025-10-25T14:05:00.000000Z',
-            'created_at__local' => null,
-            'created_at_2__utc' => '2025-10-25T14:05:00.000000Z',
-            'created_at_2__timezone' => null,
-            'created_at_3__utc' => '2025-10-25T14:05:00.000000Z',
+            'created_at__utc' => '2025-10-25 14:05:00',
+            'created_at__local' => '2025-10-25 16:05:00',
+            'created_at_2__utc' => '2025-10-25 14:05:00',
+            'created_at_2__timezone' => '+02:00',
+            'created_at_3__utc' => '2025-10-25 14:05:00',
         ], $note->attributesToArray());
         // -------------------------------------------------------------------------------------------------------------
         // Case: Model sometimes calls cast-setter with malformed value
